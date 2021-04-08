@@ -66,7 +66,7 @@ func OriginalRemoveIndex(arr []string, pos int) []string {
 
 	for i := 0; i < len(arr); i++ {
 		if i != pos {
-			newArray[i] = arr[k]
+			newArray[i-1] = arr[k]
 			k++
 		} else {
 			k++
