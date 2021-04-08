@@ -60,16 +60,11 @@ func IsProxyOnline(server string) bool {
 }
 
 func OriginalRemoveIndex(arr []string, pos int) []string {
-	newArray := make([]string, len(arr)-1)
-
-	k := 0
+	newArray := make([]string, len(arr))
 
 	for i := 0; i < len(arr); i++ {
 		if i != pos {
-			newArray[i-1] = arr[k]
-			k++
-		} else {
-			k++
+			newArray[i] = arr[i]
 		}
 	}
 
