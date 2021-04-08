@@ -16,10 +16,7 @@ func GetOnlinePlayers() int {
 	var cursor = "0"
 
 	for ok := true; ok; ok = (cursor != "0") {
-		result, err := redisConnection.Do("SCAN", cursor, []string{
-			"MATCH",
-			"users:*",
-		})
+		result, err := redisConnection.Do("SCAN", cursor, "MATCH", "users:*")
 
 		if err != nil {
 			log.Println(err)
