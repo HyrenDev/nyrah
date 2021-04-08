@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"log"
 	"net"
 	"sort"
 
@@ -12,6 +11,8 @@ import (
 )
 
 func GetBalancedProxyApplicationName(proxies []string) (string, error) {
+	var indexes = make([]int, 0)
+
 	for index, proxy := range proxies {
 		proxyAddress, err := GetApplicationAddress(proxy)
 
@@ -20,26 +21,28 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 				proxyAddress,
 			)
 
-			if !online {
-				proxies = OriginalRemoveIndex(proxies, index)
+			if online {
+				indexes = append(indexes, index)
 			}
-		} else {
-			proxies = OriginalRemoveIndex(proxies, index)
 		}
 	}
 
-	if len(proxies) > 1 {
-		sort.Slice(proxies, func(index1 int, index2 int) bool {
-			onlinePlayers1, _ := GetApplicationOnlinePlayers(proxies[index1])
-			onlinePlayers2, _ := GetApplicationOnlinePlayers(proxies[index2])
+	newArray := make([]string, len(indexes))
+
+	for i := 0; i < len(indexes); i++ {
+		newArray[i] = proxies[i]
+	}
+
+	if len(newArray) > 1 {
+		sort.Slice(newArray, func(index1 int, index2 int) bool {
+			onlinePlayers1, _ := GetApplicationOnlinePlayers(newArray[index1])
+			onlinePlayers2, _ := GetApplicationOnlinePlayers(newArray[index2])
 
 			return onlinePlayers2 > onlinePlayers1
 		})
 	}
 
-	log.Println(len(proxies))
-
-	return proxies[0], nil
+	return newArray[0], nil
 }
 
 func GetApplicationOnlinePlayers(application string) (int, error) {
@@ -93,18 +96,4 @@ func IsProxyOnline(server string) bool {
 	}
 
 	return true
-}
-
-func OriginalRemoveIndex(arr []string, pos int) []string {
-	newArray := make([]string, len(arr))
-
-	for i := 0; i < len(arr); i++ {
-		if i != pos {
-			newArray[i] = arr[i]
-		} else {
-			log.Println("É igual")
-		}
-	}
-
-	return newArray
 }
