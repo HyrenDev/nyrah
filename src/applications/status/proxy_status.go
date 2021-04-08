@@ -59,6 +59,8 @@ func GetApplicationOnlinePlayers(application string) (int, error) {
 		redisConnection.Do("GET", fmt.Sprintf("applications:%s", application)),
 	)
 
+	defer redisConnection.Close()
+
 	if err != nil {
 		return 0, err
 	}
@@ -79,6 +81,8 @@ func GetApplicationAddress(application string) (string, error) {
 	var bytes, err = redis.Bytes(
 		redisConnection.Do("GET", fmt.Sprintf("applications:%s", application)),
 	)
+
+	defer redisConnection.Close()
 
 	if err != nil {
 		return "", err
