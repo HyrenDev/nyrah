@@ -22,7 +22,8 @@ func GetOnlinePlayers() int {
 		return 0
 	}
 
-	log.Println(result)
+	log.Println(redis.Int(result[0], nil))
+	log.Println(redis.String(result[1], nil))
 
 	defer redisConnection.Close()
 
