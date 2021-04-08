@@ -1,108 +1,43 @@
 package status
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"log"
-	"math/big"
-	"net"
 	"sort"
 
 	Databases "../../databases"
 )
 
-type ApplicationsStatus struct {
-	applicationsStatus []ApplicationStatus
-}
-
-type ApplicationStatus struct {
-	applicationName string
-	applicationType string
-	address         string
-	onlineSince     big.Int
-	heapSize        big.Int
-	heapMaxSize     big.Int
-	heapFreeSize    big.Int
-	onlinePlayers   int
-}
-
-func (applicationsStatus *ApplicationsStatus) Append(applicationStatus ApplicationStatus) {
-	applicationsStatus.applicationsStatus = append(applicationsStatus.applicationsStatus, applicationStatus)
-}
-
-func NewApplicationsStatus() ApplicationsStatus {
-	return ApplicationsStatus{
-		[]ApplicationStatus{},
-	}
-}
-
-func (applicationsStatus *ApplicationsStatus) GetSortedApplicationsStatus() []ApplicationStatus {
-	var _applicationsStatus = applicationsStatus.applicationsStatus
-
-	sort.Slice(_applicationsStatus, func(index1, index2 int) bool {
-		log.Println(fmt.Sprintf(
-			"Name 1: %s\nName 2: %s",
-			_applicationsStatus[index1].applicationName,
-			_applicationsStatus[index2].applicationName,
-		))
-
-		return _applicationsStatus[index1].onlinePlayers > _applicationsStatus[index2].onlinePlayers
-	})
-
-	return applicationsStatus.applicationsStatus
-}
-
 func GetBalancedProxyApplicationName(proxies []string) (string, error) {
-	var newApplications = NewApplicationsStatus()
-
-	for _, proxy := range proxies {
-		applicationStatus, err := GetApplicationStatus(proxy)
+	sort.Slice(proxies, func(index1, index2 int) bool {
+		onlinePlayers1, err := GetApplicationOnlinePlayers(proxies[index1])
 
 		if err != nil {
-			log.Println("asd")
-
-			continue
-		} else {
-			log.Println("dale")
-
-			newApplications.Append(applicationStatus)
+			return false
 		}
-	}
 
-	return newApplications.applicationsStatus[0].applicationName, nil
+		onlinePlayers2, err := GetApplicationOnlinePlayers(proxies[index2])
+
+		if err != nil {
+			return false
+		}
+
+		return onlinePlayers2 > onlinePlayers1
+	})
+
+	return proxies[0], nil
 }
 
-func IsProxyOnline(server string) bool {
-	_, err := net.Dial("tcp", server)
-
-	if err != nil {
-		return false
-	}
-
-	return true
-}
-
-func GetApplicationStatus(application string) (ApplicationStatus, error) {
+func GetApplicationOnlinePlayers(application string) (int, error) {
 	redisConnection := Databases.StartRedis().Get()
 
-	var serializedProxyApplicationStatus, err = redis.Bytes(
-		redisConnection.Do("GET", fmt.Sprintf("applications:%s", application)),
+	var onlinePlayers, err = redis.Int(
+		redisConnection.Do("HGET", fmt.Sprintf("applications:%s", application), "onlinePlayers"),
 	)
 
 	if err != nil {
-		return ApplicationStatus{}, err
+		return 0, err
 	}
 
-	var proxyApplicationStatus ApplicationStatus
-
-	err = json.Unmarshal(serializedProxyApplicationStatus, &proxyApplicationStatus)
-
-	if err != nil {
-		return ApplicationStatus{}, err
-	}
-
-	log.Println(proxyApplicationStatus)
-
-	return proxyApplicationStatus, nil
+	return onlinePlayers, nil
 }
