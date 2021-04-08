@@ -83,15 +83,20 @@ func GetApplicationStatus(application string) (ApplicationStatus, error) {
 	var serializedProxyApplicationStatus, err = redis.Bytes(
 		redisConnection.Do("GET", fmt.Sprintf("applications:%s", application)),
 	)
-	var proxyApplicationStatus ApplicationStatus
-
-	_ = json.Unmarshal(serializedProxyApplicationStatus, &proxyApplicationStatus)
-
-	log.Println(proxyApplicationStatus)
 
 	if err != nil {
 		return ApplicationStatus{}, err
 	}
+
+	var proxyApplicationStatus ApplicationStatus
+
+	err = json.Unmarshal(serializedProxyApplicationStatus, &proxyApplicationStatus)
+
+	if err != nil {
+		return ApplicationStatus{}, err
+	}
+
+	log.Println(proxyApplicationStatus)
 
 	return proxyApplicationStatus, nil
 }
