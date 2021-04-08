@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/base64"
 	"encoding/json"
+	"github.com/gomodule/redigo/redis"
 	"io/ioutil"
 	"log"
 	"os"
@@ -13,19 +14,15 @@ import (
 func GetOnlinePlayers() int {
 	redisConnection := Databases.StartRedis().Get()
 
-	var cursor = "0"
+	result, err := redis.Values(redisConnection.Do("SCAN", 0, "MATCH", "users:*"))
 
-	for ok := true; ok; ok = (cursor != "0") {
-		result, err := redisConnection.Do("SCAN", cursor, "MATCH", "users:*")
+	if err != nil {
+		log.Println(err)
 
-		if err != nil {
-			log.Println(err)
-
-			return 0
-		}
-
-		log.Println(result)
+		return 0
 	}
+
+	log.Println(result)
 
 	defer redisConnection.Close()
 
