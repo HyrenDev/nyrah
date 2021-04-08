@@ -17,7 +17,7 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 		var online = IsProxyOnline(proxy)
 
 		if !online {
-			proxies = append(proxies[:index], proxies[index+1:]...)
+			proxies = append(proxies[:index-1], proxies[index+1:]...)
 		}
 	}
 
