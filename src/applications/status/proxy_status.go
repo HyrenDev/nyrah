@@ -64,7 +64,7 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 		}
 	}
 
-	return newApplications.applicationsStatus[0].applicationName, nil
+	return newApplications.applicationsStatus[1].applicationName, nil
 }
 
 func IsProxyOnline(server string) bool {
