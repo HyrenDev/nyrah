@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
+	"math/rand"
 	"net"
 	"sort"
 
@@ -32,6 +33,10 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 	for i := 0; i < len(indexes); i++ {
 		newArray[i] = proxies[indexes[i]]
 	}
+
+	rand.Shuffle(len(proxies), func(i, j int) {
+		proxies[i], proxies[j] = proxies[j], proxies[i]
+	})
 
 	if len(newArray) > 1 {
 		sort.SliceStable(newArray, func(index1 int, index2 int) bool {
