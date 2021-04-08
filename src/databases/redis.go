@@ -3,6 +3,7 @@ package databases
 import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
+	"log"
 	"time"
 
 	Env "../environment"
@@ -28,7 +29,7 @@ func StartRedis() *redis.Pool {
 			c, err := redis.Dial("tcp", redisServer)
 
 			if err != nil {
-				panic(nil)
+				log.Println(nil)
 			}
 
 			if _, err := c.Do("AUTH", password); err != nil {

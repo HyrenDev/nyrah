@@ -1,13 +1,11 @@
 package applications
 
 import (
+	Databases "../databases"
+	ProxyStatus "./status"
 	"errors"
 	"fmt"
 	"log"
-	"math/rand"
-
-	Databases "../databases"
-	ProxyStatus "./status"
 )
 
 func GetProxyAddress(key string) string {
@@ -16,7 +14,7 @@ func GetProxyAddress(key string) string {
 	row, err := db.Query("SELECT \"address\", \"port\" FROM \"applications\" WHERE \"name\"='" + key + "'")
 
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 
 	var address string
@@ -33,10 +31,10 @@ func GetProxyAddress(key string) string {
 }
 
 func GetRandomProxy(proxies []string) (string, error) {
-	rand.Shuffle(len(proxies), func(i, j int) {
-		proxies[i], proxies[j] = proxies[j], proxies[i]
-	})
-
+	//rand.Shuffle(len(proxies), func(i, j int) {
+	//	proxies[i], proxies[j] = proxies[j], proxies[i]
+	//})
+	//
 	for _, proxy := range proxies {
 		log.Println("Getting status from ", proxy)
 
@@ -45,7 +43,15 @@ func GetRandomProxy(proxies []string) (string, error) {
 		var online = ProxyStatus.IsProxyOnline(address)
 
 		if online {
-			return proxy, nil
+			var applicationsStatus, err = ProxyStatus.GetProxyPlayerCount(proxy)
+
+			if err != nil {
+				log.Println(err)
+			} else {
+				log.Println(applicationsStatus)
+
+				return proxy, nil
+			}
 		}
 	}
 

@@ -2,6 +2,7 @@ package databases
 
 import (
 	"fmt"
+	"log"
 
 	"database/sql"
 	_ "github.com/lib/pq"
@@ -30,13 +31,13 @@ func StartPostgres() *sql.DB {
 	db, err := sql.Open("postgres", infos)
 
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 
 	err = db.Ping()
 
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 
 	return db

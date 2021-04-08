@@ -1,7 +1,11 @@
 package status
 
 import (
+	"fmt"
+	"log"
 	"net"
+
+	redis "../../databases"
 )
 
 func IsProxyOnline(server string) bool {
@@ -12,4 +16,18 @@ func IsProxyOnline(server string) bool {
 	}
 
 	return true
+}
+
+func GetProxyPlayerCount(proxy string) (int, error) {
+	redisConnection := redis.StartRedis().Get()
+
+	var proxyApplicationStatus, err = redisConnection.Do("GET", fmt.Sprintf("applications:%s", proxy))
+
+	if err != nil {
+		return 0, err
+	}
+
+	log.Println(proxyApplicationStatus)
+
+	return 0, nil
 }

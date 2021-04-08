@@ -11,14 +11,18 @@ func CreateServer(address string, port int) {
 	server := gominet.NewServer(address, port, PacketHandler.HandlePackets)
 
 	if server == nil {
-		panic("Failed to create minecraft server")
+		log.Println("Failed to create minecraft server")
+
+		return
 	}
 
 	err := server.ListenAndServe()
 
 	if err != nil {
-		panic(err)
+		log.Println(err)
+
+		return
 	}
 
-	log.Println("Started minecraft server on ", address, " with port ", port, ">")
+	log.Println("Started minecraft server on ", address, " with port ", port)
 }

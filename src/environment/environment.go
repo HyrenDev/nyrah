@@ -3,6 +3,7 @@ package environment
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 )
 
 const (
@@ -13,7 +14,7 @@ func ReadFile() map[string]interface{} {
 	dat, err := ioutil.ReadFile(ENV_PATH)
 
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 
 	var data map[string]interface{}

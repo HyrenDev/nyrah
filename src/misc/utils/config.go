@@ -54,7 +54,7 @@ func GetFavicon() (string, error) {
 	file, err := ioutil.ReadFile(path + "/public/favicon.png")
 
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 
 	b64 := base64.StdEncoding.EncodeToString(file)
@@ -85,7 +85,7 @@ func ReadSettingsFile() map[string]interface{} {
 	dat, err := ioutil.ReadFile(path + "/settings.json")
 
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 
 	var data map[string]interface{}
