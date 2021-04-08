@@ -64,7 +64,7 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 		}
 	}
 
-	return newApplications.applicationsStatus[1].applicationName, nil
+	return newApplications.applicationsStatus[0].applicationName, nil
 }
 
 func IsProxyOnline(server string) bool {
@@ -86,6 +86,8 @@ func GetApplicationStatus(application string) (ApplicationStatus, error) {
 	var proxyApplicationStatus ApplicationStatus
 
 	_ = json.Unmarshal(serializedProxyApplicationStatus, &proxyApplicationStatus)
+
+	log.Println(proxyApplicationStatus)
 
 	if err != nil {
 		return ApplicationStatus{}, err
