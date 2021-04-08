@@ -14,7 +14,7 @@ import (
 func GetOnlinePlayers() int {
 	redisConnection := Databases.StartRedis().Get()
 
-	keys, err := redis.Int(redisConnection.Do("SCAN", "0", "MATCH", "users:*"))
+	keys, err := redis.Int(redisConnection.Do("scan", "0", "MATCH", "users:*"))
 
 	defer redisConnection.Close()
 
