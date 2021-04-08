@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
+	"log"
 	"net"
 	"sort"
 
@@ -22,7 +23,7 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 			)
 
 			if online {
-				indexes = append(indexes, index+1)
+				indexes = append(indexes, index)
 			}
 		}
 	}
@@ -92,8 +93,12 @@ func IsProxyOnline(server string) bool {
 	_, err := net.Dial("tcp", server)
 
 	if err != nil {
+		log.Println("Falhou:", server)
+
 		return false
 	}
+
+	log.Println("Address:", server)
 
 	return true
 }
