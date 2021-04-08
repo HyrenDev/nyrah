@@ -1,0 +1,5 @@
+src/*.exe
+src/*.pid
+
+*.exe
+*.iml
