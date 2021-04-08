@@ -31,23 +31,13 @@ func GetProxyAddress(key string) string {
 }
 
 func GetRandomProxy(proxies []string) (string, error) {
-	for _, proxy := range proxies {
-		log.Println("Getting status from ", proxy)
+	proxyApplicationName, err := status.GetBalancedProxyApplicationName(proxies)
 
-		proxyApplication, err := status.GetBalancedProxyApplicationName(proxy)
+	log.Println("Getting status from ", proxyApplicationName)
 
-		if err != nil {
-			continue
-		}
-
-		var address = GetProxyAddress(proxyApplication)
-
-		var online = status.IsProxyOnline(address)
-
-		if online {
-			return proxy, nil
-		}
+	if err != nil {
+		return "", err
 	}
 
-	return "", errors.New("couldn't find an proxy online")
+	return proxyApplicationName, errors.New("couldn't find an proxy online")
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
+	"log"
 	"math/big"
 	"net"
 	"sort"
@@ -46,15 +47,21 @@ func (applicationsStatus *ApplicationsStatus) GetSortedApplicationsStatus() []Ap
 	return applicationsStatus.applicationsStatus
 }
 
-func GetBalancedProxyApplicationName(proxy string) (string, error) {
+func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 	var newApplications = NewApplicationsStatus()
 
-	applicationStatus, err := GetApplicationStatus(proxy)
+	for _, proxy := range proxies {
+		applicationStatus, err := GetApplicationStatus(proxy)
 
-	if err == nil {
-		return "", err
-	} else {
-		newApplications.Append(applicationStatus)
+		if err == nil {
+			log.Println("asd")
+
+			return "", err
+		} else {
+			log.Println("dale")
+
+			newApplications.Append(applicationStatus)
+		}
 	}
 
 	return newApplications.applicationsStatus[0].applicationName, nil
