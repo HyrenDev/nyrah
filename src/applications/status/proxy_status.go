@@ -53,7 +53,7 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 	for _, proxy := range proxies {
 		applicationStatus, err := GetApplicationStatus(proxy)
 
-		if err == nil {
+		if err != nil {
 			log.Println("asd")
 
 			return "", err
