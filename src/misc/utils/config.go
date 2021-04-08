@@ -13,9 +13,10 @@ import (
 func GetOnlinePlayers() int {
 	redisConnection := Databases.StartRedis().Get()
 
-	for ok := true; ok; ok = true {
-		result, err := redisConnection.Do("SCAN", []string{
-			"0",
+	var cursor = "0"
+
+	for ok := true; ok; ok = (cursor != "0") {
+		result, err := redisConnection.Do("SCAN", cursor, []string{
 			"MATCH",
 			"users:*",
 		})
