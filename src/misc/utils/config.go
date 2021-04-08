@@ -1,15 +1,48 @@
 package utils
 
 import (
+	"../constants"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"github.com/gomodule/redigo/redis"
+	"gominet/chat"
 	"io/ioutil"
 	"log"
 	"os"
 
 	Databases "../../databases"
 )
+
+func GetMOTD() chat.TextComponent {
+	db := Databases.StartPostgres()
+
+	row, err := db.Query("SELECT \"first_line\", \"second_line\" FROM \"motd\" LIMIT 1")
+
+	if err == nil && row.Next() {
+		var first_line string
+		var second_line string
+
+		err := row.Scan(&first_line, &second_line)
+
+		if err == nil {
+			return chat.TextComponent{
+				Text: fmt.Sprintf(
+					"%s\n%s",
+					first_line,
+					second_line,
+				),
+			}
+		}
+	}
+
+	return chat.TextComponent{
+		Text: fmt.Sprintf("%s - Nyrah", constants.SERVER_NAME),
+		Component: chat.Component{
+			Color: chat.Yellow,
+		},
+	}
+}
 
 func GetOnlinePlayers() int {
 	redisConnection := Databases.StartRedis().Get()

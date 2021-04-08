@@ -56,12 +56,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 				response.Status.Version.Protocol = 47
 				response.Status.Players.Max = maxPlayers
 				response.Status.Players.Online = online
-				response.Status.Description = chat.TextComponent{
-					Text: "Hyren - Nyrah",
-					Component: chat.Component{
-						Color: chat.Yellow,
-					},
-				}
+				response.Status.Description = Config.GetMOTD()
 				response.Status.ModInfo.Type = "FML"
 				response.Status.ModInfo.ModList = []string{}
 
