@@ -25,6 +25,9 @@ func GetMOTD() chat.TextComponent {
 
 		err := row.Scan(&first_line, &second_line)
 
+		row.Close()
+		db.Close()
+
 		if err == nil {
 			return chat.TextComponent{
 				Text: fmt.Sprintf(
@@ -35,6 +38,9 @@ func GetMOTD() chat.TextComponent {
 			}
 		}
 	}
+
+	row.Close()
+	db.Close()
 
 	return chat.TextComponent{
 		Text: fmt.Sprintf("%s - Nyrah", constants.SERVER_NAME),
