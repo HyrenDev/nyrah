@@ -17,7 +17,10 @@ func GetOnlinePlayers() int {
 
 	defer redisConnection.Close()
 
-	log.Println(keys)
+	var result = keys.(map[int]interface{})
+
+	log.Println(result[0])
+	log.Println(result[2])
 
 	if err != nil {
 		log.Println("Couldn't get player count cause:", err)
