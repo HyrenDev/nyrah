@@ -2,10 +2,10 @@ package status
 
 import (
 	"fmt"
-	"log"
+	"github.com/gomodule/redigo/redis"
 	"net"
 
-	redis "../../databases"
+	Databases "../../databases"
 )
 
 func IsProxyOnline(server string) bool {
@@ -18,16 +18,16 @@ func IsProxyOnline(server string) bool {
 	return true
 }
 
-func GetProxyPlayerCount(proxy string) (int, error) {
-	redisConnection := redis.StartRedis().Get()
+func GetProxyPlayerCount(proxy string) (interface{}, error) {
+	redisConnection := Databases.StartRedis().Get()
 
-	var proxyApplicationStatus, err = redisConnection.Do("GET", fmt.Sprintf("applications:%s", proxy))
+	var proxyApplicationStatus, err = redis.Values(
+		redisConnection.Do("GET", fmt.Sprintf("applications:%s", proxy)),
+	)
 
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	log.Println(proxyApplicationStatus)
-
-	return 0, nil
+	return proxyApplicationStatus, nil
 }
