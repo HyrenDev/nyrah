@@ -10,24 +10,10 @@ import (
 	"os"
 )
 
-const (
-	REDIS_ONLINE_COUNT_SCRIPT_PATH = "/home/scripts/redis/countOnlineUsers.lua"
-)
-
 func GetOnlinePlayers() int {
-	script, err := ioutil.ReadFile(REDIS_ONLINE_COUNT_SCRIPT_PATH)
-
-	if err != nil {
-		panic(err)
-	}
-
 	redisConnection := Databases.StartRedis().Get()
 
-	sha, err := redis.String(redisConnection.Do("SCRIPT", "LOAD", script))
-
-	var redisData interface{}
-
-	redisData, err = redisConnection.Do("EVALSHA", sha, "0")
+	keys, err := redis.Int(redisConnection.Do("KEYS", "users:*"))
 
 	defer redisConnection.Close()
 
@@ -37,7 +23,7 @@ func GetOnlinePlayers() int {
 		return 0
 	}
 
-	return int(redisData.(int64))
+	return keys
 }
 
 func GetMaxPlayers() int {
@@ -68,21 +54,13 @@ func GetFavicon() (string, error) {
 func GetServerAddress() string {
 	var settings = ReadSettingsFile()
 
-	return settings["address"].(string)
+	return settings["address"].(map[string]interface{})["address"].(string)
 }
 
 func GetServerPort() int {
 	var settings = ReadSettingsFile()
 
-	return int(settings["port"].(float64))
-}
-
-func GetServerMOTD() string {
-	var settings = ReadSettingsFile()
-
-	var motd = settings["motd"].(map[string]interface{})
-
-	return motd["first_line"].(string) + "\n" + motd["second_line"].(string)
+	return int(settings["address"].(map[string]interface{})["port"].(float64))
 }
 
 func ReadSettingsFile() map[string]interface{} {
