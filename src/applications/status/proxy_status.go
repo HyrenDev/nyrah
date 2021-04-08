@@ -17,7 +17,7 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 		var online = IsProxyOnline(proxy)
 
 		if !online {
-			proxies = append(proxies[:index-1], proxies[index+1:]...)
+			proxies = OriginalRemoveIndex(proxies, index)
 		}
 	}
 
@@ -57,4 +57,20 @@ func IsProxyOnline(server string) bool {
 	}
 
 	return true
+}
+
+func OriginalRemoveIndex(arr []string, pos int) []string {
+	newArray := make([]string, len(arr)-1)
+	k := 0
+	for i := 0; i < (len(arr) - 1); {
+		if i != pos {
+			newArray[i] = arr[k]
+			k++
+		} else {
+			k++
+		}
+		i++
+	}
+
+	return newArray
 }
