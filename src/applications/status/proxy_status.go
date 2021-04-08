@@ -52,6 +52,8 @@ func GetApplicationOnlinePlayers(application string) (int, error) {
 		redisConnection.Do("HGET", fmt.Sprintf("applications:%s", application), "onlinePlayers"),
 	)
 
+	log.Println("Online players:", onlinePlayers)
+
 	if err != nil {
 		return 0, err
 	}
@@ -62,15 +64,17 @@ func GetApplicationOnlinePlayers(application string) (int, error) {
 func GetApplicationAddress(application string) (string, error) {
 	redisConnection := Databases.StartRedis().Get()
 
-	var onlinePlayers, err = redis.String(
+	var address, err = redis.String(
 		redisConnection.Do("HGET", fmt.Sprintf("applications:%s", application), "address"),
 	)
+
+	log.Println("address:", address)
 
 	if err != nil {
 		return "", err
 	}
 
-	return onlinePlayers, nil
+	return address, nil
 }
 
 func IsProxyOnline(server string) bool {
