@@ -16,7 +16,7 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 		if err != nil {
 			log.Println("1")
 
-			return false
+			return true
 		}
 
 		onlinePlayers2, err := GetApplicationOnlinePlayers(proxies[index2])
@@ -24,10 +24,10 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 		if err != nil {
 			log.Println("2")
 
-			return false
+			return true
 		}
 
-		return onlinePlayers2 > onlinePlayers1
+		return onlinePlayers1 > onlinePlayers2
 	})
 
 	return proxies[0], nil
