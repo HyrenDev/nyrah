@@ -1,47 +1,16 @@
 package status
 
 import (
+	Databases "../../databases"
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"net"
-	"sort"
-
-	Databases "../../databases"
 )
 
 type ApplicationStatus struct {
 	name          string
 	onlinePlayers int
-}
-
-type ApplicationStatusSorter struct {
-	applicationStatus []ApplicationStatus
-	c                 func(x, y ApplicationStatus) bool
-}
-
-func (s ApplicationStatusSorter) Len() int {
-	return len(s.applicationStatus)
-}
-
-func (s ApplicationStatusSorter) Less(i, j int) bool {
-	return s.applicationStatus[i].onlinePlayers < s.applicationStatus[j].onlinePlayers
-}
-
-func (s ApplicationStatusSorter) Swap(i, j int) {
-	s.applicationStatus[i], s.applicationStatus[j] = s.applicationStatus[j], s.applicationStatus[i]
-}
-
-func sortApplicationStatus(
-	applicationStatus []ApplicationStatus,
-	c func(x, y ApplicationStatus) bool,
-) {
-	sorter := ApplicationStatusSorter{
-		applicationStatus: applicationStatus,
-		c:                 c,
-	}
-
-	sort.Sort(sorter)
 }
 
 func GetBalancedProxyApplicationName(proxies []string) (string, error) {
@@ -63,6 +32,8 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 
 	applicationsStatus := make([]ApplicationStatus, len(indexes))
 
+	var totalPlayers = 0
+
 	for i := 0; i < len(indexes); i++ {
 		var name = proxies[indexes[i]]
 
@@ -72,17 +43,13 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 			name:          name,
 			onlinePlayers: onlinePlayers,
 		}
+
+		totalPlayers += onlinePlayers
 	}
 
-	if len(applicationsStatus) > 1 {
-		c := func(x, y ApplicationStatus) bool {
-			return x.onlinePlayers < y.onlinePlayers
-		}
+	var index = totalPlayers % len(applicationsStatus)
 
-		sortApplicationStatus(applicationsStatus, c)
-	}
-
-	return applicationsStatus[0].name, nil
+	return applicationsStatus[index].name, nil
 }
 
 func GetApplicationOnlinePlayers(application string) (int, error) {
