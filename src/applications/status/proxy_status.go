@@ -21,7 +21,7 @@ func IsProxyOnline(server string) bool {
 func GetProxyPlayerCount(proxy string) (interface{}, error) {
 	redisConnection := Databases.StartRedis().Get()
 
-	var proxyApplicationStatus, err = redis.Values(
+	var proxyApplicationStatus, err = redis.Strings(
 		redisConnection.Do("GET", fmt.Sprintf("applications:%s", proxy)),
 	)
 

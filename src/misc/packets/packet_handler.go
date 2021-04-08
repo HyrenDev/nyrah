@@ -156,7 +156,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 func disconnectBecauseNotHaveProxyToSend(connection *protocol.Connection) {
 	connection.Disconnect(chat.TextComponent{
 		Text: fmt.Sprintf(
-			"%s\n\nNão foi possível localizar um proxy para enviar você.",
+			"%s\n\n§r§cNão foi possível localizar um proxy para enviar você.",
 			NyrahConstants.SERVER_PREFIX,
 		),
 	})
