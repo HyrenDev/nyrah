@@ -12,9 +12,7 @@ func StartRedis() *redis.Pool {
 	var data = Env.ReadFile()
 
 	var databases = data["databases"].(map[string]interface{})
-	var global = databases["global"].(map[string]interface{})
-	var _redis = global["redis"].(map[string]interface{})
-	var main = _redis["main"].(map[string]interface{})
+	var main = databases["redis"].(map[string]interface{})["main"].(map[string]interface{})
 
 	var host = main["host"].(string)
 	var port = int(main["port"].(float64))
@@ -24,7 +22,7 @@ func StartRedis() *redis.Pool {
 	redisServer := fmt.Sprintf("%s:%d", host, port)
 
 	var pool = &redis.Pool{
-		MaxIdle: 3,
+		MaxIdle:     3,
 		IdleTimeout: 240 * time.Second,
 		Dial: func() (redis.Conn, error) {
 			c, err := redis.Dial("tcp", redisServer)

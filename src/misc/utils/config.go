@@ -65,8 +65,6 @@ func GetServerPort() int {
 func ReadSettingsFile() map[string]interface{} {
 	path, err := os.Getwd()
 
-	log.Println(path)
-
 	if err != nil {
 		log.Println(err)
 	}

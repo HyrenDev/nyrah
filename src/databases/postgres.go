@@ -13,8 +13,7 @@ func StartPostgres() *sql.DB {
 	var data = Env.ReadFile()
 
 	var databases = data["databases"].(map[string]interface{})
-	var global = databases["global"].(map[string]interface{})
-	var postgres = global["postgres"].(map[string]interface{})
+	var postgres = databases["postgresql"].(map[string]interface{})
 
 	var host = postgres["host"].(string)
 	var port = int(postgres["port"].(float64))
@@ -24,8 +23,8 @@ func StartPostgres() *sql.DB {
 	var schema = postgres["schema"].(string)
 
 	var infos = fmt.Sprintf(
-	"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable search_path=%s",
-		host,port, user, password, database, schema,
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable search_path=%s",
+		host, port, user, password, database, schema,
 	)
 
 	db, err := sql.Open("postgres", infos)
