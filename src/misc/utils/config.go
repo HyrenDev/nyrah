@@ -54,6 +54,8 @@ func GetFavicon() (string, error) {
 func GetServerAddress() string {
 	var settings = ReadSettingsFile()
 
+	log.Print(settings)
+
 	return settings["address"].(map[string]interface{})["host"].(string)
 }
 
