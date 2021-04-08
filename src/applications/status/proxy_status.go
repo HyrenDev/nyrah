@@ -1,12 +1,64 @@
 package status
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
+	"math/big"
 	"net"
+	"sort"
 
 	Databases "../../databases"
 )
+
+type ApplicationsStatus struct {
+	applicationsStatus []ApplicationStatus
+}
+
+type ApplicationStatus struct {
+	applicationName string
+	applicationType string
+	address         string
+	onlineSince     big.Int
+	heapSize        big.Int
+	heapMaxSize     big.Int
+	heapFreeSize    big.Int
+	onlinePlayers   int
+}
+
+func (applicationsStatus *ApplicationsStatus) Append(applicationStatus ApplicationStatus) {
+	applicationsStatus.applicationsStatus = append(applicationsStatus.applicationsStatus, applicationStatus)
+}
+
+func NewApplicationsStatus() ApplicationsStatus {
+	return ApplicationsStatus{
+		[]ApplicationStatus{},
+	}
+}
+
+func (applicationsStatus *ApplicationsStatus) GetSortedApplicationsStatus() []ApplicationStatus {
+	var _applicationsStatus = applicationsStatus.applicationsStatus
+
+	sort.Slice(_applicationsStatus, func(index1, index2 int) bool {
+		return _applicationsStatus[index1].onlinePlayers > _applicationsStatus[index2].onlinePlayers
+	})
+
+	return applicationsStatus.applicationsStatus
+}
+
+func GetBalancedProxyApplicationName(proxy string) (string, error) {
+	var newApplications = NewApplicationsStatus()
+
+	applicationStatus, err := GetApplicationStatus(proxy)
+
+	if err == nil {
+		return "", err
+	} else {
+		newApplications.Append(applicationStatus)
+	}
+
+	return newApplications.applicationsStatus[0].applicationName, nil
+}
 
 func IsProxyOnline(server string) bool {
 	_, err := net.Dial("tcp", server)
@@ -18,15 +70,18 @@ func IsProxyOnline(server string) bool {
 	return true
 }
 
-func GetProxyPlayerCount(proxy string) (interface{}, error) {
+func GetApplicationStatus(application string) (ApplicationStatus, error) {
 	redisConnection := Databases.StartRedis().Get()
 
-	var proxyApplicationStatus, err = redis.String(
-		redisConnection.Do("GET", fmt.Sprintf("applications:%s", proxy)),
+	var serializedProxyApplicationStatus, err = redis.Bytes(
+		redisConnection.Do("GET", fmt.Sprintf("applications:%s", application)),
 	)
+	var proxyApplicationStatus ApplicationStatus
+
+	_ = json.Unmarshal(serializedProxyApplicationStatus, &proxyApplicationStatus)
 
 	if err != nil {
-		return nil, err
+		return ApplicationStatus{}, err
 	}
 
 	return proxyApplicationStatus, nil
