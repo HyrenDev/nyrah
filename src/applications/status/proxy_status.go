@@ -49,7 +49,7 @@ func GetApplicationOnlinePlayers(application string) (int, error) {
 	redisConnection := Databases.StartRedis().Get()
 
 	var onlinePlayers, err = redis.Int(
-		redisConnection.Do("HGET", fmt.Sprintf("applications:%s", application), "onlinePlayers"),
+		redisConnection.Do("GET", fmt.Sprintf("applications:%s", application), "onlinePlayers"),
 	)
 
 	log.Println("Online players:", onlinePlayers)
@@ -65,7 +65,7 @@ func GetApplicationAddress(application string) (string, error) {
 	redisConnection := Databases.StartRedis().Get()
 
 	var address, err = redis.String(
-		redisConnection.Do("HGET", fmt.Sprintf("applications:%s", application), "address"),
+		redisConnection.Do("GET", fmt.Sprintf("applications:%s", application), "address"),
 	)
 
 	log.Println("address:", address)
