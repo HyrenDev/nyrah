@@ -1,29 +1,28 @@
 package utils
 
 import (
-	Databases "../../databases"
 	"encoding/base64"
 	"encoding/json"
-	"github.com/gomodule/redigo/redis"
 	"io/ioutil"
 	"log"
 	"os"
 )
 
 func GetOnlinePlayers() int {
-	redisConnection := Databases.StartRedis().Get()
-
-	keys, err := redis.Int(redisConnection.Do("KEYS", "users:*"))
-
-	defer redisConnection.Close()
-
-	if err != nil {
-		log.Println("Couldn't get player count")
-
-		return 0
-	}
-
-	return keys
+	//redisConnection := Databases.StartRedis().Get()
+	//
+	//keys, err := redis.Int(redisConnection.Do("KEYS", "users:*"))
+	//
+	//defer redisConnection.Close()
+	//
+	//if err != nil {
+	//	log.Println("Couldn't get player count")
+	//
+	//	return 0
+	//}
+	//
+	//return keys
+	return 0
 }
 
 func GetMaxPlayers() int {
