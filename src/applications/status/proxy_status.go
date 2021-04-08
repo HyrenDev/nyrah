@@ -38,7 +38,7 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 			onlinePlayers1, _ := GetApplicationOnlinePlayers(newArray[index1])
 			onlinePlayers2, _ := GetApplicationOnlinePlayers(newArray[index2])
 
-			return onlinePlayers2 > onlinePlayers1
+			return onlinePlayers1 > onlinePlayers2
 		})
 	}
 
