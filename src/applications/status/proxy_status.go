@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"log"
 	"net"
 	"sort"
 
@@ -35,16 +34,12 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 	}
 
 	if len(newArray) > 1 {
-		log.Println("É maior que 1")
-
-		sort.Slice(newArray, func(index1 int, index2 int) bool {
+		sort.SliceStable(newArray, func(index1 int, index2 int) bool {
 			onlinePlayers1, _ := GetApplicationOnlinePlayers(newArray[index1])
 			onlinePlayers2, _ := GetApplicationOnlinePlayers(newArray[index2])
 
 			return onlinePlayers2 > onlinePlayers1
 		})
-	} else {
-		log.Println("É menor que 1")
 	}
 
 	return newArray[0], nil
