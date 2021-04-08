@@ -36,6 +36,8 @@ func GetRandomProxy(proxies []string) (string, error) {
 	log.Println("Getting status from ", proxyApplicationName)
 
 	if err != nil {
+		log.Println(err)
+
 		return "", err
 	}
 
