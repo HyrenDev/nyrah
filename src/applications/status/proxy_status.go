@@ -21,12 +21,14 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 		}
 	}
 
-	sort.Slice(proxies, func(index1 int, index2 int) bool {
-		onlinePlayers1, _ := GetApplicationOnlinePlayers(proxies[index1])
-		onlinePlayers2, _ := GetApplicationOnlinePlayers(proxies[index2])
+	if len(proxies) > 1 {
+		sort.Slice(proxies, func(index1 int, index2 int) bool {
+			onlinePlayers1, _ := GetApplicationOnlinePlayers(proxies[index1])
+			onlinePlayers2, _ := GetApplicationOnlinePlayers(proxies[index2])
 
-		return onlinePlayers2 > onlinePlayers1
-	})
+			return onlinePlayers2 > onlinePlayers1
+		})
+	}
 
 	log.Println(len(proxies))
 
