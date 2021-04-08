@@ -14,20 +14,28 @@ import (
 func GetOnlinePlayers() int {
 	redisConnection := Databases.StartRedis().Get()
 
-	result, err := redis.Values(redisConnection.Do("SCAN", 0, "MATCH", "users:*"))
+	var onlinePlayers int
 
-	if err != nil {
-		log.Println(err)
+	cursor := 0
 
-		return 0
+	for ok := true; ok; ok = cursor != 0 {
+		result, err := redis.Values(redisConnection.Do("SCAN", cursor, "MATCH", "users:*"))
+
+		if err != nil {
+			log.Println(err)
+
+			return 0
+		}
+
+		cursor, _ = redis.Int(result[0], nil)
+		keys, _ := redis.Strings(result[1], nil)
+
+		onlinePlayers += len(keys)
 	}
-
-	log.Println(redis.Int(result[0], nil))
-	log.Println(redis.Strings(result[1], nil))
 
 	defer redisConnection.Close()
 
-	return 0
+	return onlinePlayers
 }
 
 func GetMaxPlayers() int {
