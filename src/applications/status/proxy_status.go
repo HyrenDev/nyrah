@@ -22,7 +22,7 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 			)
 
 			if online {
-				indexes = append(indexes, index+1)
+				indexes = append(indexes, index)
 			}
 		}
 	}
@@ -30,7 +30,7 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 	newArray := make([]string, len(indexes))
 
 	for i := 0; i < len(indexes); i++ {
-		newArray[i] = proxies[i]
+		newArray[i] = proxies[indexes[i]]
 	}
 
 	if len(newArray) > 1 {
