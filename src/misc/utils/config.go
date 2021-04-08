@@ -14,17 +14,19 @@ import (
 func GetOnlinePlayers() int {
 	redisConnection := Databases.StartRedis().Get()
 
-	keys, err := redis.Int(redisConnection.Do("scan", "0", "MATCH", "users:*"))
+	keys, err := redis.String(redisConnection.Do("scan", "0", "MATCH", "users:*"))
 
 	defer redisConnection.Close()
 
+	log.Println(keys)
+
 	if err != nil {
-		log.Println("Couldn't get player count cause: ", err)
+		log.Println("Couldn't get player count cause:", err)
 
 		return 0
 	}
 
-	return keys
+	return 0
 }
 
 func GetMaxPlayers() int {
