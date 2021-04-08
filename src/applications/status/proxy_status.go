@@ -3,7 +3,6 @@ package status
 import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"log"
 	"sort"
 
 	Databases "../../databases"
@@ -11,23 +10,11 @@ import (
 
 func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 	sort.Slice(proxies, func(index1, index2 int) bool {
-		onlinePlayers1, err := GetApplicationOnlinePlayers(proxies[index1])
+		onlinePlayers1, _ := GetApplicationOnlinePlayers(proxies[index1])
 
-		if err != nil {
-			log.Println("1")
+		onlinePlayers2, _ := GetApplicationOnlinePlayers(proxies[index2])
 
-			return true
-		}
-
-		onlinePlayers2, err := GetApplicationOnlinePlayers(proxies[index2])
-
-		if err != nil {
-			log.Println("2")
-
-			return true
-		}
-
-		return onlinePlayers1 > onlinePlayers2
+		return onlinePlayers2 > onlinePlayers1
 	})
 
 	return proxies[0], nil
