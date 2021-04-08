@@ -13,14 +13,11 @@ import (
 func GetOnlinePlayers() int {
 	redisConnection := Databases.StartRedis().Get()
 
-	keys, err := redisConnection.Do("SCAN", "0", "MATCH", "users:*")
+	result, err := redisConnection.Do("SCAN", "0", "MATCH", "users:*")
 
 	defer redisConnection.Close()
 
-	var result = keys.(map[int]interface{})
-
-	log.Println(result[0])
-	log.Println(result[2])
+	log.Println(&result)
 
 	if err != nil {
 		log.Println("Couldn't get player count cause:", err)
