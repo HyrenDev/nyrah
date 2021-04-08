@@ -14,9 +14,19 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 	log.Println(len(proxies))
 
 	for index, proxy := range proxies {
-		var online = IsProxyOnline(proxy)
+		proxyAddress, err := GetApplicationAddress(proxy)
 
-		if !online {
+		log.Println("Proxy:", proxy, " address:", proxyAddress)
+
+		if err != nil {
+			online := IsProxyOnline(
+				proxyAddress,
+			)
+
+			if !online {
+				proxies = OriginalRemoveIndex(proxies, index)
+			}
+		} else {
 			proxies = OriginalRemoveIndex(proxies, index)
 		}
 	}
@@ -44,6 +54,20 @@ func GetApplicationOnlinePlayers(application string) (int, error) {
 
 	if err != nil {
 		return 0, err
+	}
+
+	return onlinePlayers, nil
+}
+
+func GetApplicationAddress(application string) (string, error) {
+	redisConnection := Databases.StartRedis().Get()
+
+	var onlinePlayers, err = redis.String(
+		redisConnection.Do("HGET", fmt.Sprintf("applications:%s", application), "address"),
+	)
+
+	if err != nil {
+		return "", err
 	}
 
 	return onlinePlayers, nil
