@@ -11,6 +11,35 @@ import (
 	Databases "../../databases"
 )
 
+type ApplicationStatus struct {
+	name          string
+	onlinePlayers int
+}
+
+type ApplicationStatusSorter struct {
+	applicationStatus []ApplicationStatus
+}
+
+func (s ApplicationStatusSorter) Len() int {
+	return len(s.applicationStatus)
+}
+
+func (s ApplicationStatusSorter) Less(i, j int) bool {
+	return s.applicationStatus[i].onlinePlayers < s.applicationStatus[j].onlinePlayers
+}
+
+func (s ApplicationStatusSorter) Swap(i, j int) {
+	s.applicationStatus[i], s.applicationStatus[j] = s.applicationStatus[j], s.applicationStatus[i]
+}
+
+func sortApplicationStatus(applicationStatus []ApplicationStatus) {
+	sorter := ApplicationStatusSorter{
+		applicationStatus: applicationStatus,
+	}
+
+	sort.Sort(sorter)
+}
+
 func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 	var indexes = make([]int, 0)
 
@@ -28,26 +57,28 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 		}
 	}
 
-	newArray := make([]string, len(indexes))
+	applicationsStatus := make([]ApplicationStatus, len(indexes))
 
 	for i := 0; i < len(indexes); i++ {
-		newArray[i] = proxies[indexes[i]]
+		var name = proxies[indexes[i]]
+
+		onlinePlayers, _ := GetApplicationOnlinePlayers(name)
+
+		applicationsStatus[i] = ApplicationStatus{
+			name:          name,
+			onlinePlayers: onlinePlayers,
+		}
 	}
 
 	rand.Shuffle(len(proxies), func(i, j int) {
 		proxies[i], proxies[j] = proxies[j], proxies[i]
 	})
 
-	if len(newArray) > 1 {
-		sort.SliceStable(newArray, func(index1 int, index2 int) bool {
-			onlinePlayers1, _ := GetApplicationOnlinePlayers(newArray[index1])
-			onlinePlayers2, _ := GetApplicationOnlinePlayers(newArray[index2])
-
-			return onlinePlayers2 < onlinePlayers1
-		})
+	if len(applicationsStatus) > 1 {
+		sortApplicationStatus(applicationsStatus)
 	}
 
-	return newArray[0], nil
+	return applicationsStatus[0].name, nil
 }
 
 func GetApplicationOnlinePlayers(application string) (int, error) {
