@@ -56,7 +56,7 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 		if err != nil {
 			log.Println("asd")
 
-			return "", err
+			continue
 		} else {
 			log.Println("dale")
 
