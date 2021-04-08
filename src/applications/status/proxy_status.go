@@ -1,6 +1,7 @@
 package status
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"log"
@@ -64,17 +65,25 @@ func GetApplicationOnlinePlayers(application string) (int, error) {
 func GetApplicationAddress(application string) (string, error) {
 	redisConnection := Databases.StartRedis().Get()
 
-	var address, err = redis.String(
-		redisConnection.Do("GET", fmt.Sprintf("applications:%s", application), "address"),
+	var bytes, err = redis.Bytes(
+		redisConnection.Do("GET", fmt.Sprintf("applications:%s", application)),
 	)
-
-	log.Println("address:", address)
 
 	if err != nil {
 		return "", err
 	}
 
-	return address, nil
+	var data map[string]interface{}
+
+	err = json.Unmarshal(bytes, &data)
+
+	if err != nil {
+		return "", err
+	}
+
+	log.Println("address:", data["address"])
+
+	return data["address"].(string), nil
 }
 
 func IsProxyOnline(server string) bool {
