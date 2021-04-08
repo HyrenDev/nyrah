@@ -41,6 +41,12 @@ func (applicationsStatus *ApplicationsStatus) GetSortedApplicationsStatus() []Ap
 	var _applicationsStatus = applicationsStatus.applicationsStatus
 
 	sort.Slice(_applicationsStatus, func(index1, index2 int) bool {
+		log.Println(fmt.Sprintf(
+			"Name 1: %s\nName 2: %s",
+			_applicationsStatus[index1].applicationName,
+			_applicationsStatus[index2].applicationName,
+		))
+
 		return _applicationsStatus[index1].onlinePlayers > _applicationsStatus[index2].onlinePlayers
 	})
 
