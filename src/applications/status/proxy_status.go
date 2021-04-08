@@ -12,12 +12,8 @@ import (
 )
 
 func GetBalancedProxyApplicationName(proxies []string) (string, error) {
-	log.Println(len(proxies))
-
 	for index, proxy := range proxies {
 		proxyAddress, err := GetApplicationAddress(proxy)
-
-		log.Println("Proxy:", proxy, " address:", proxyAddress)
 
 		if err == nil {
 			online := IsProxyOnline(
@@ -64,7 +60,7 @@ func GetApplicationOnlinePlayers(application string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	return data["onlinePlayers"].(int), nil
+	return int(data["onlinePlayers"].(float64)), nil
 }
 
 func GetApplicationAddress(application string) (string, error) {
@@ -101,8 +97,6 @@ func IsProxyOnline(server string) bool {
 
 func OriginalRemoveIndex(arr []string, pos int) []string {
 	newArray := make([]string, len(arr))
-
-	log.Println("Remover:", pos)
 
 	for i := 0; i < len(arr); i++ {
 		if i != pos {
