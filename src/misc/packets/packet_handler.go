@@ -11,10 +11,10 @@ import (
 	"reflect"
 	"strings"
 
-	NyrahConstants "../constants"
 	ProxyApp "../../applications"
 	Databases "../../databases"
 	Connection "../connection"
+	NyrahConstants "../constants"
 	Config "../utils"
 )
 
@@ -97,7 +97,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			if ok {
 				db := Databases.StartPostgres()
 
-				rows, err := db.Query("SELECT \"name\" FROM \"applications\" WHERE \"type\"='PROXY';")
+				rows, err := db.Query("SELECT \"name\" FROM \"applications\" WHERE \"application_type\"='PROXY';")
 
 				if err != nil {
 					return err

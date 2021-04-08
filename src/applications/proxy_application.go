@@ -13,7 +13,7 @@ import (
 func GetProxyAddress(key string) string {
 	db := Databases.StartPostgres()
 
-	row, err := db.Query("SELECT \"address\", \"port\" FROM \"apps\" WHERE \"name\"='" + key + "'")
+	row, err := db.Query("SELECT \"address\", \"port\" FROM \"applications\" WHERE \"name\"='" + key + "'")
 
 	if err != nil {
 		panic(err)
