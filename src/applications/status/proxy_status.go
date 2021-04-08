@@ -19,7 +19,7 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 
 		log.Println("Proxy:", proxy, " address:", proxyAddress)
 
-		if err != nil {
+		if err == nil {
 			online := IsProxyOnline(
 				proxyAddress,
 			)
@@ -28,8 +28,6 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 				proxies = OriginalRemoveIndex(proxies, index)
 			}
 		} else {
-			log.Println("Erro !")
-
 			proxies = OriginalRemoveIndex(proxies, index)
 		}
 	}
