@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"math/rand"
 	"net"
 	"sort"
 
@@ -18,6 +17,7 @@ type ApplicationStatus struct {
 
 type ApplicationStatusSorter struct {
 	applicationStatus []ApplicationStatus
+	c                 func(x, y ApplicationStatus) bool
 }
 
 func (s ApplicationStatusSorter) Len() int {
@@ -32,9 +32,13 @@ func (s ApplicationStatusSorter) Swap(i, j int) {
 	s.applicationStatus[i], s.applicationStatus[j] = s.applicationStatus[j], s.applicationStatus[i]
 }
 
-func sortApplicationStatus(applicationStatus []ApplicationStatus) {
+func sortApplicationStatus(
+	applicationStatus []ApplicationStatus,
+	c func(x, y ApplicationStatus) bool,
+) {
 	sorter := ApplicationStatusSorter{
 		applicationStatus: applicationStatus,
+		c:                 c,
 	}
 
 	sort.Sort(sorter)
@@ -70,12 +74,12 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 		}
 	}
 
-	rand.Shuffle(len(proxies), func(i, j int) {
-		proxies[i], proxies[j] = proxies[j], proxies[i]
-	})
-
 	if len(applicationsStatus) > 1 {
-		sortApplicationStatus(applicationsStatus)
+		c := func(x, y ApplicationStatus) bool {
+			return x.onlinePlayers < y.onlinePlayers
+		}
+
+		sortApplicationStatus(applicationsStatus, c)
 	}
 
 	return applicationsStatus[0].name, nil
