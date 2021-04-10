@@ -231,5 +231,7 @@ func offlinePlayerUUID(name string) (uuid.UUID, error) {
 		),
 	)
 
+	log.Println(b)
+
 	return uuid.FromBytes(b)
 }
