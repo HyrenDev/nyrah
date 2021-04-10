@@ -1,10 +1,8 @@
 package packets
 
 import (
-	"encoding/hex"
 	"errors"
 	"fmt"
-	uuid "github.com/google/uuid"
 	"gominet/chat"
 	"gominet/protocol"
 	"gominet/protocol/codecs"
@@ -188,19 +186,35 @@ func disconnectBecauseMaintenanceModeIsEnabled(connection *protocol.Connection) 
 }
 
 func canJoin(name string) bool {
-	userId, err := offlinePlayerUUID(name)
-
-	if err != nil {
-		log.Println(err)
-		return false
-	}
-
 	db := Databases.StartPostgres()
 
 	rows, err := db.Query(
 		fmt.Sprintf(
+			"SELECT \"id\" FROM \"users\" WHERE \"name\" ILIKE '%s'",
+			name,
+		),
+	)
+
+	if err != nil {
+		log.Println(err)
+
+		defer rows.Close()
+		defer db.Close()
+		return false
+	}
+
+	var id string
+
+	if rows.Next() {
+		rows.Scan(&id)
+
+		defer rows.Close()
+	}
+
+	rows, err = db.Query(
+		fmt.Sprintf(
 			"SELECT \"group_name\" FROM \"users_groups_due\" WHERE \"user_id\"='%s';",
-			userId,
+			id,
 		),
 	)
 
@@ -221,23 +235,8 @@ func canJoin(name string) bool {
 		}
 	}
 
+	defer rows.Close()
+	defer db.Close()
+
 	return false
-}
-
-func offlinePlayerUUID(name string) (uuid.UUID, error) {
-	byteArray := []byte(
-		fmt.Sprintf("OfflinePlayer:%s",
-			name,
-		),
-	)
-
-	n, err := hex.Decode(byteArray, byteArray)
-
-	if err != nil {
-		return uuid.Nil, err
-	}
-
-	return uuid.FromBytes(
-		byteArray[:n],
-	)
 }
