@@ -92,8 +92,12 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			loginStart, ok := holder.(packet.LoginStart)
 
 			if ok {
+				name := string(loginStart.Username)
+
+				log.Println("Conexão recebida de", name)
+
 				if Config.IsMaintenanceModeEnabled() == true && !canJoin(
-					string(loginStart.Username),
+					name,
 				) {
 					disconnectBecauseMaintenanceModeIsEnabled(
 						connection,
@@ -206,7 +210,7 @@ func canJoin(name string) bool {
 
 		_ = rows.Scan(&group_name)
 
-		log.Println("Grupo de ", name, " -> ", group_name)
+		log.Println("Grupo de", name, " ->", group_name)
 
 		if group_name == "MASTER" || group_name == "DIRECTOR" || group_name == "MANAGER" || group_name == "ADMINISTRATOR" || group_name == "MODERATOR" || group_name == "HELPER" {
 			return true
