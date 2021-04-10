@@ -1,6 +1,7 @@
 package packets
 
 import (
+	"encoding/hex"
 	"errors"
 	"fmt"
 	uuid "github.com/google/uuid"
@@ -220,9 +221,19 @@ func canJoin(name string) bool {
 }
 
 func offlinePlayerUUID(name string) (uuid.UUID, error) {
-	return uuid.Parse(
+	byteArray := []byte(
 		fmt.Sprintf("OfflinePlayer:%s",
 			name,
 		),
+	)
+
+	n, err := hex.Decode(byteArray, byteArray)
+
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return uuid.FromBytes(
+		byteArray[:n],
 	)
 }
