@@ -19,7 +19,7 @@ func GetProxyAddress(key string) string {
 	var address string
 	var port int
 
-	for row.Next() {
+	if row.Next() {
 		_ = row.Scan(&address, &port)
 	}
 

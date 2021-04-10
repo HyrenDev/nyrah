@@ -1,8 +1,10 @@
 package packets
 
 import (
+	"encoding/hex"
 	"errors"
 	"fmt"
+	uuid "github.com/satori/go.uuid"
 	"gominet/chat"
 	"gominet/protocol"
 	"gominet/protocol/codecs"
@@ -89,12 +91,10 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 		{
 			loginStart, ok := holder.(packet.LoginStart)
 
-			log.Println("asdsa")
-
 			if ok {
-				log.Println("Manutenção:", Config.IsMaintenanceModeEnabled())
-
-				if Config.IsMaintenanceModeEnabled() == true {
+				if Config.IsMaintenanceModeEnabled() == true && !canJoin(
+					string(loginStart.Username),
+				) {
 					disconnectBecauseMaintenanceModeIsEnabled(
 						connection,
 					)
@@ -177,4 +177,51 @@ func disconnectBecauseMaintenanceModeIsEnabled(connection *protocol.Connection) 
 			NyrahConstants.SERVER_PREFIX,
 		),
 	})
+}
+
+func canJoin(name string) bool {
+	userId, err := offlinePlayerUUID(name)
+
+	if err != nil {
+		return false
+	}
+
+	db := Databases.StartPostgres()
+
+	rows, err := db.Query(
+		fmt.Sprintf(
+			"SELECT \"group_name\" FROM \"users_groups_due\" WHERE \"user_id\"='%s';",
+			userId,
+		),
+	)
+
+	if err != nil {
+		return false
+	}
+
+	for next := rows.Next(); next; next = rows.Next() {
+		var group_name string
+
+		_ = rows.Scan(&group_name)
+
+		if group_name == "MASTER" || group_name == "DIRECTOR" || group_name == "MANAGER" || group_name == "ADMINISTRATOR" || group_name == "MODERATOR" || group_name == "HELPER" {
+			return true
+		}
+	}
+
+	return false
+}
+
+func offlinePlayerUUID(name string) (uuid.UUID, error) {
+	if len(name) == len(uuid.Nil.String()) {
+		return uuid.FromString(name)
+	}
+
+	b, err := hex.DecodeString(name)
+
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return uuid.FromBytes(b)
 }
