@@ -92,6 +92,10 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			loginStart, ok := holder.(packet.LoginStart)
 
 			if ok {
+				loginSuccess, _ := holder.(packet.LoginSuccess)
+
+				log.Println(loginSuccess.UUID)
+
 				name := string(loginStart.Username)
 
 				log.Println("Conexão recebida de", name)
