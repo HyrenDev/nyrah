@@ -137,6 +137,8 @@ func GetMaxPlayers() int {
 	rows, err := db.Query("SELECT \"slots\" FROM \"applications\" WHERE \"name\"='nyrah'")
 
 	if err != nil {
+		log.Println(err)
+
 		return 0
 	}
 
