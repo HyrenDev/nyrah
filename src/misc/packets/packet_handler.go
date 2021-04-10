@@ -90,6 +90,8 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			loginStart, ok := holder.(packet.LoginStart)
 
 			if ok {
+				log.Println("Manutenção:", Config.IsMaintenanceModeEnabled())
+
 				if Config.IsMaintenanceModeEnabled() == true {
 					disconnectBecauseMaintenanceModeIsEnabled(
 						connection,
