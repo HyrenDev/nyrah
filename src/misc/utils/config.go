@@ -19,7 +19,7 @@ func GetMOTD() chat.TextComponent {
 
 	row, err := db.Query("SELECT \"current_state\" FROM \"maintenance\" WHERE \"application_name\"='nyrah';")
 
-	if err == nil {
+	if err == nil && row.Next() {
 		var current_state bool
 
 		err := row.Scan(&current_state)
