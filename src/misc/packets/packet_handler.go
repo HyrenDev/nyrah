@@ -225,7 +225,12 @@ func offlinePlayerUUID(name string) (uuid.UUID, error) {
 		return uuid.FromString(name)
 	}
 
-	b, err := hex.DecodeString(name)
+	b, err := hex.DecodeString(
+		fmt.Sprintf(
+			"OfflinePlayer:%s",
+			name,
+		),
+	)
 
 	if err != nil {
 		return uuid.Nil, err
