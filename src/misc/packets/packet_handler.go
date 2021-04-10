@@ -190,7 +190,7 @@ func canJoin(name string) bool {
 
 	rows, err := db.Query(
 		fmt.Sprintf(
-			"SELECT \"id\" FROM \"users\" WHERE \"name\" ILIKE '%s'",
+			"SELECT \"id\" FROM \"users\" WHERE \"name\" ILIKE '%s';",
 			name,
 		),
 	)

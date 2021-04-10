@@ -134,21 +134,25 @@ func GetOnlinePlayers() int {
 func GetMaxPlayers() int {
 	db := Databases.StartPostgres()
 
-	rows, err := db.Query("SELECT \"slots\" FROM \"applications\" WHERE \"name\"='nyrah';")
+	row, err := db.Query("SELECT \"slots\" FROM \"applications\" WHERE \"name\"='nyrah';")
 
 	if err != nil {
-		log.Println(err)
-
 		return 0
 	}
 
+	log.Println("Chegou aqui")
+
 	var slots int
 
-	if rows.Next() {
-		_ = rows.Scan(slots)
+	if row.Next() {
+		log.Println("dale pra ler")
+
+		_ = row.Scan(slots)
+
+		log.Println(slots)
 	}
 
-	defer rows.Close()
+	defer row.Close()
 	defer db.Close()
 
 	return slots
