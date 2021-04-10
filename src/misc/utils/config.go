@@ -141,7 +141,7 @@ func GetMaxPlayers() int {
 		return 0
 	}
 
-	var slots codecs.VarInt
+	var slots codecs.UnsignedInt
 
 	log.Println("Chegou aqui")
 
