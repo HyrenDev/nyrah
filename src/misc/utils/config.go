@@ -8,10 +8,10 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/patrickmn/go-cache"
 	"gominet/chat"
-	"gominet/protocol/codecs"
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -141,7 +141,7 @@ func GetMaxPlayers() int {
 		return 0
 	}
 
-	var slots codecs.UnsignedInt
+	var slots string
 
 	log.Println("Chegou aqui")
 
@@ -160,7 +160,9 @@ func GetMaxPlayers() int {
 	defer row.Close()
 	defer db.Close()
 
-	return int(slots)
+	i, err := strconv.Atoi(slots)
+
+	return i
 }
 
 func GetFavicon() (string, error) {
