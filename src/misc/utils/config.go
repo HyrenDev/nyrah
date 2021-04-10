@@ -142,16 +142,16 @@ func GetMaxPlayers() int {
 		return 0
 	}
 
-	var max_players int
+	var slots int
 
 	if rows.Next() {
-		_ = rows.Scan(max_players)
+		_ = rows.Scan(slots)
 	}
 
 	defer rows.Close()
 	defer db.Close()
 
-	return max_players
+	return slots
 }
 
 func GetFavicon() (string, error) {
