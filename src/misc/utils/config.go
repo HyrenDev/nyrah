@@ -134,7 +134,7 @@ func GetOnlinePlayers() int {
 func GetMaxPlayers() int {
 	db := Databases.StartPostgres()
 
-	rows, err := db.Query("SELECT \"slots\" FROM \"applications\" WHERE \"name\"='nyrah'")
+	rows, err := db.Query("SELECT \"slots\" FROM \"applications\" WHERE \"name\"='nyrah';")
 
 	if err != nil {
 		log.Println(err)
