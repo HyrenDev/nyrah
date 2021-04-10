@@ -153,7 +153,7 @@ func GetMaxPlayers() int {
 		defer db.Close()
 	}
 
-	return int(max_players.(float64))
+	return int(max_players.(int64))
 }
 
 func GetFavicon() (string, error) {
