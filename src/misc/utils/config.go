@@ -52,9 +52,17 @@ func GetMOTD() chat.TextComponent {
 							"§cO servidor atualmente está em manutenção.",
 						),
 					}
+				} else {
+					log.Println(err)
 				}
+			} else {
+				log.Println(err)
 			}
+		} else {
+			log.Println(err)
 		}
+	} else {
+		log.Println(err)
 	}
 
 	defer row.Close()
