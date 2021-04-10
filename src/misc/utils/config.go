@@ -143,8 +143,6 @@ func GetMaxPlayers() int {
 			return 0
 		}
 
-		var maxPlayers int
-
 		if row.Next() {
 			_ = row.Scan(&maxPlayers)
 		}
