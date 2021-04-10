@@ -132,24 +132,30 @@ func GetOnlinePlayers() int {
 }
 
 func GetMaxPlayers() int {
-	db := Databases.StartPostgres()
+	maxPlayers, found := CACHE.Get("max_players")
 
-	row, err := db.Query("SELECT \"slots\" FROM \"applications\" WHERE \"name\"='nyrah';")
+	if !found {
+		db := Databases.StartPostgres()
 
-	if err != nil {
-		return 0
+		row, err := db.Query("SELECT \"slots\" FROM \"applications\" WHERE \"name\"='nyrah';")
+
+		if err != nil {
+			return 0
+		}
+
+		var maxPlayers int
+
+		if row.Next() {
+			_ = row.Scan(&maxPlayers)
+		}
+
+		CACHE.Set("max_players", maxPlayers, 3*time.Second)
+
+		defer row.Close()
+		defer db.Close()
 	}
 
-	var maxPlayers int
-
-	if row.Next() {
-		_ = row.Scan(&maxPlayers)
-	}
-
-	defer row.Close()
-	defer db.Close()
-
-	return maxPlayers
+	return maxPlayers.(int)
 }
 
 func GetFavicon() (string, error) {
