@@ -116,8 +116,8 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 					index++
 				}
 
-				rows.Close()
-				db.Close()
+				defer rows.Close()
+				defer db.Close()
 
 				if len(proxies) == 0 {
 					disconnectBecauseNotHaveProxyToSend(connection)

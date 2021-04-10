@@ -3,7 +3,6 @@ package applications
 import (
 	Databases "../databases"
 	"./status"
-	"errors"
 	"fmt"
 	"log"
 )
@@ -36,7 +35,7 @@ func GetRandomProxy(proxies []string) (string, error) {
 	log.Println("Getting status from", proxyApplicationName)
 
 	if err != nil {
-		return "", errors.New("couldn't find an proxy online")
+		return "", err
 	}
 
 	return proxyApplicationName, nil

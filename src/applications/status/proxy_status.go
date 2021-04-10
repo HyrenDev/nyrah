@@ -3,6 +3,7 @@ package status
 import (
 	Databases "../../databases"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"net"
@@ -45,6 +46,10 @@ func GetBalancedProxyApplicationName(proxies []string) (string, error) {
 		}
 
 		totalPlayers += onlinePlayers
+	}
+
+	if len(applicationsStatus) <= 0 {
+		return "", errors.New("don't have online proxies")
 	}
 
 	var index = totalPlayers % len(applicationsStatus)

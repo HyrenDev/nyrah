@@ -17,24 +17,42 @@ import (
 func GetMOTD() chat.TextComponent {
 	db := Databases.StartPostgres()
 
-	row, err := db.Query("SELECT \"first_line\", \"second_line\" FROM \"motd\" LIMIT 1")
+	row, err := db.Query("SELECT \"current_state\" FROM \"maintenance\" WHERE \"application_name\"='nyrah';")
 
-	if err == nil && row.Next() {
-		var first_line string
-		var second_line string
+	if err == nil {
+		var current_state bool
 
-		err := row.Scan(&first_line, &second_line)
-
-		defer row.Close()
-		defer db.Close()
+		err := row.Scan(&current_state)
 
 		if err == nil {
-			return chat.TextComponent{
-				Text: fmt.Sprintf(
-					"%s\n%s",
-					first_line,
-					second_line,
-				),
+			row, err := db.Query("SELECT \"first_line\", \"second_line\" FROM \"motd\" LIMIT 1")
+
+			if err == nil && row.Next() {
+				var first_line string
+				var second_line string
+
+				err := row.Scan(&first_line, &second_line)
+
+				defer row.Close()
+				defer db.Close()
+
+				if err == nil && current_state == false {
+					return chat.TextComponent{
+						Text: fmt.Sprintf(
+							"%s\n%s",
+							first_line,
+							second_line,
+						),
+					}
+				} else if err == nil && current_state == true {
+					return chat.TextComponent{
+						Text: fmt.Sprintf(
+							"%s\n%s",
+							first_line,
+							"§cO servidor atualmente está em manutenção.",
+						),
+					}
+				}
 			}
 		}
 	}
