@@ -134,32 +134,22 @@ func GetOnlinePlayers() int {
 func GetMaxPlayers() int {
 	db := Databases.StartPostgres()
 
-	row, err := db.Query("SELECT * FROM \"applications\" WHERE \"name\"='nyrah';")
+	row, err := db.Query("SELECT \"slots\" FROM \"applications\" WHERE \"name\"='nyrah';")
 
 	if err != nil {
 		return 0
 	}
 
-	var slots int
-
-	log.Println("Chegou aqui")
+	var maxPlayers int
 
 	if row.Next() {
-		log.Println("dale pra ler")
-
-		err = row.Scan(slots)
-
-		if err != nil {
-			log.Println(err)
-		}
-
-		log.Println(slots)
+		_ = row.Scan(&maxPlayers)
 	}
 
 	defer row.Close()
 	defer db.Close()
 
-	return slots
+	return maxPlayers
 }
 
 func GetFavicon() (string, error) {
