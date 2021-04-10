@@ -1,6 +1,7 @@
 package packets
 
 import (
+	"encoding/hex"
 	"errors"
 	"fmt"
 	uuid "github.com/satori/go.uuid"
@@ -224,7 +225,7 @@ func offlinePlayerUUID(name string) (uuid.UUID, error) {
 		return uuid.FromString(name)
 	}
 
-	b := []byte(
+	b, err := hex.DecodeString(
 		fmt.Sprintf(
 			"OfflinePlayer:%s",
 			name,
@@ -232,6 +233,10 @@ func offlinePlayerUUID(name string) (uuid.UUID, error) {
 	)
 
 	log.Println(b)
+
+	if err != nil {
+		return uuid.Nil, err
+	}
 
 	return uuid.FromBytes(b)
 }
