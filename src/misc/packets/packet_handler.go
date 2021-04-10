@@ -183,6 +183,7 @@ func canJoin(name string) bool {
 	userId, err := offlinePlayerUUID(name)
 
 	if err != nil {
+		log.Println(err)
 		return false
 	}
 
@@ -196,6 +197,7 @@ func canJoin(name string) bool {
 	)
 
 	if err != nil {
+		log.Println(err)
 		return false
 	}
 
