@@ -132,7 +132,7 @@ func GetOnlinePlayers() int {
 }
 
 func GetMaxPlayers() int {
-	maxPlayers, found := CACHE.Get("max_players")
+	max_players, found := CACHE.Get("max_players")
 
 	if !found {
 		db := Databases.StartPostgres()
@@ -144,16 +144,16 @@ func GetMaxPlayers() int {
 		}
 
 		if row.Next() {
-			_ = row.Scan(&maxPlayers)
+			_ = row.Scan(&max_players)
 		}
 
-		CACHE.Set("max_players", maxPlayers, 3*time.Second)
+		CACHE.Set("max_players", max_players, 3*time.Second)
 
 		defer row.Close()
 		defer db.Close()
 	}
 
-	return maxPlayers.(int)
+	return max_players.(int)
 }
 
 func GetFavicon() (string, error) {
