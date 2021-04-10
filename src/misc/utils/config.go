@@ -140,14 +140,18 @@ func GetMaxPlayers() int {
 		return 0
 	}
 
-	log.Println("Chegou aqui")
+	var slots = 0
 
-	var slots int
+	log.Println("Chegou aqui")
 
 	if row.Next() {
 		log.Println("dale pra ler")
 
-		_ = row.Scan(slots)
+		err = row.Scan(slots)
+
+		if err != nil {
+			log.Println(err)
+		}
 
 		log.Println(slots)
 	}
