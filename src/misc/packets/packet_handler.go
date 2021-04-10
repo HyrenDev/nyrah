@@ -89,6 +89,8 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 		{
 			loginStart, ok := holder.(packet.LoginStart)
 
+			log.Println("asdsa")
+
 			if ok {
 				log.Println("Manutenção:", Config.IsMaintenanceModeEnabled())
 
