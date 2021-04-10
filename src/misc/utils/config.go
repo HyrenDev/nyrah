@@ -11,7 +11,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -135,13 +134,13 @@ func GetOnlinePlayers() int {
 func GetMaxPlayers() int {
 	db := Databases.StartPostgres()
 
-	row, err := db.Query("SELECT \"slots\" FROM \"applications\" WHERE \"name\"='nyrah';")
+	row, err := db.Query("SELECT * FROM \"applications\" WHERE \"name\"='nyrah';")
 
 	if err != nil {
 		return 0
 	}
 
-	var slots string
+	var slots int
 
 	log.Println("Chegou aqui")
 
@@ -160,9 +159,7 @@ func GetMaxPlayers() int {
 	defer row.Close()
 	defer db.Close()
 
-	i, err := strconv.Atoi(slots)
-
-	return i
+	return slots
 }
 
 func GetFavicon() (string, error) {
