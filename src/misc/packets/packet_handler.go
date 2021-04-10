@@ -25,7 +25,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			handshake, ok := holder.(packet.Handshake)
 
 			if !ok {
-				return errors.New(fmt.Sprintf("Expected handshake, received: %s", reflect.TypeOf(holder)))
+				return errors.New(fmt.Sprintf("expected handshake, received: %s", reflect.TypeOf(holder)))
 			}
 
 			connection.Protocol = uint16(handshake.ProtocolVersion)
@@ -90,7 +90,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			loginStart, ok := holder.(packet.LoginStart)
 
 			if ok {
-				if Config.IsMaintenanceModeEnabled() {
+				if Config.IsMaintenanceModeEnabled() == true {
 					disconnectBecauseMaintenanceModeIsEnabled(
 						connection,
 					)
