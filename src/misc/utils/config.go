@@ -1,79 +1,88 @@
 package utils
 
 import (
-	"../constants"
+	Databases "../../databases"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
+	"github.com/patrickmn/go-cache"
 	"gominet/chat"
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
+)
 
-	Databases "../../databases"
+var (
+	CACHE = cache.New(cache.NoExpiration, 10*time.Second)
 )
 
 func GetMOTD() chat.TextComponent {
 	db := Databases.StartPostgres()
 
-	row, err := db.Query("SELECT \"current_state\" FROM \"maintenance\" WHERE \"application_name\"='nyrah';")
+	var maintenance = IsMaintenanceModeEnabled()
 
-	if err == nil && row.Next() {
-		var current_state bool
+	motd, found := CACHE.Get("motd")
 
-		err := row.Scan(&current_state)
+	if !found {
+		row, err := db.Query("SELECT \"first_line\", \"second_line\" FROM \"motd\" LIMIT 1")
 
-		if err == nil {
-			row, err := db.Query("SELECT \"first_line\", \"second_line\" FROM \"motd\" LIMIT 1")
+		if err == nil && row.Next() {
+			var first_line string
+			var second_line string
 
-			if err == nil && row.Next() {
-				var first_line string
-				var second_line string
+			_ = row.Scan(&first_line, &second_line)
 
-				err := row.Scan(&first_line, &second_line)
-
-				defer row.Close()
-				defer db.Close()
-
-				if err == nil && current_state == false {
-					return chat.TextComponent{
-						Text: fmt.Sprintf(
-							"%s\n%s",
-							first_line,
-							second_line,
-						),
-					}
-				} else if err == nil && current_state == true {
-					return chat.TextComponent{
-						Text: fmt.Sprintf(
-							"%s\n%s",
-							first_line,
-							"§cO servidor atualmente está em manutenção.",
-						),
-					}
-				} else {
-					log.Println(err)
+			if maintenance == true {
+				motd = chat.TextComponent{
+					Text: fmt.Sprintf(
+						"%s\n%s",
+						first_line,
+						"§cO servidor atualmente está em manutenção.",
+					),
 				}
 			} else {
-				log.Println(err)
+				motd = chat.TextComponent{
+					Text: fmt.Sprintf(
+						"%s\n%s",
+						first_line,
+						second_line,
+					),
+				}
 			}
-		} else {
-			log.Println(err)
+
+			defer row.Close()
+
+			CACHE.Set("motd", motd, 15*time.Second)
 		}
-	} else {
-		log.Println(err)
 	}
 
-	defer row.Close()
 	defer db.Close()
 
-	return chat.TextComponent{
-		Text: fmt.Sprintf("%s - Nyrah", constants.SERVER_NAME),
-		Component: chat.Component{
-			Color: chat.Yellow,
-		},
+	return motd.(chat.TextComponent)
+}
+
+func IsMaintenanceModeEnabled() bool {
+	db := Databases.StartPostgres()
+
+	current_state, found := CACHE.Get("maintenance")
+
+	if !found {
+		row, err := db.Query("SELECT \"current_state\" FROM \"maintenance\" WHERE \"application_name\"='nyrah';")
+
+		if err == nil && row.Next() {
+			_ = row.Scan(&current_state)
+
+			CACHE.Set("maintenance", current_state, 1*time.Second)
+
+			defer row.Close()
+		}
 	}
+
+	defer db.Close()
+
+	return current_state.(bool)
 }
 
 func GetOnlinePlayers() int {

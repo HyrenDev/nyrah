@@ -90,6 +90,13 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			loginStart, ok := holder.(packet.LoginStart)
 
 			if ok {
+				if Config.IsMaintenanceModeEnabled() {
+					disconnectBecauseMaintenanceModeIsEnabled(
+						connection,
+					)
+					return nil
+				}
+
 				db := Databases.StartPostgres()
 
 				rows, err := db.Query("SELECT \"name\" FROM \"applications\" WHERE \"application_type\"='PROXY';")
@@ -120,8 +127,9 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 				defer db.Close()
 
 				if len(proxies) == 0 {
-					disconnectBecauseNotHaveProxyToSend(connection)
-
+					disconnectBecauseNotHaveProxyToSend(
+						connection,
+					)
 					return nil
 				}
 
@@ -131,8 +139,9 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 				key, err := ProxyApp.GetRandomProxy(proxies)
 
 				if err != nil {
-					disconnectBecauseNotHaveProxyToSend(connection)
-
+					disconnectBecauseNotHaveProxyToSend(
+						connection,
+					)
 					return nil
 				}
 
@@ -152,6 +161,15 @@ func disconnectBecauseNotHaveProxyToSend(connection *protocol.Connection) {
 	connection.Disconnect(chat.TextComponent{
 		Text: fmt.Sprintf(
 			"%s\n\n§r§cNão foi possível localizar um proxy para enviar você.",
+			NyrahConstants.SERVER_PREFIX,
+		),
+	})
+}
+
+func disconnectBecauseMaintenanceModeIsEnabled(connection *protocol.Connection) {
+	connection.Disconnect(chat.TextComponent{
+		Text: fmt.Sprintf(
+			"%s\n\n§r§cO servidor atualmente encontra-se em manutenção.",
 			NyrahConstants.SERVER_PREFIX,
 		),
 	})
