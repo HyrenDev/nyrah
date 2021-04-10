@@ -3,7 +3,7 @@ package packets
 import (
 	"errors"
 	"fmt"
-	uuid "github.com/satori/go.uuid"
+	uuid "github.com/google/uuid"
 	"gominet/chat"
 	"gominet/protocol"
 	"gominet/protocol/codecs"
@@ -220,11 +220,11 @@ func canJoin(name string) bool {
 }
 
 func offlinePlayerUUID(name string) (uuid.UUID, error) {
-	if len(name) == len(uuid.Nil.String()) {
-		return uuid.FromString(name)
-	}
-
-	b := []byte(name)
+	b := []byte(
+		fmt.Sprintf("OfflinePlayer:%s",
+			name,
+		),
+	)
 
 	log.Println(b)
 
