@@ -220,13 +220,9 @@ func canJoin(name string) bool {
 }
 
 func offlinePlayerUUID(name string) (uuid.UUID, error) {
-	b := []byte(
+	return uuid.Parse(
 		fmt.Sprintf("OfflinePlayer:%s",
 			name,
 		),
 	)
-
-	log.Println(b)
-
-	return uuid.FromBytes(b)
 }
