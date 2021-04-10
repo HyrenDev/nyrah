@@ -16,6 +16,15 @@ import (
 
 var (
 	CACHE = cache.New(cache.NoExpiration, 10*time.Second)
+
+	WHITELISTED_GROUPS = []string{
+		"MASTER",
+		"DIRECTOR",
+		"MANAGER",
+		"ADMINISTRATOR",
+		"MODERATOR",
+		"HELPER",
+	}
 )
 
 func GetMOTD() chat.TextComponent {
@@ -85,6 +94,16 @@ func IsMaintenanceModeEnabled() bool {
 	return current_state.(bool)
 }
 
+func IsGroupWhitelisted(group_name string) bool {
+	for _, item := range WHITELISTED_GROUPS {
+		if item == group_name {
+			return true
+		}
+	}
+
+	return false
+}
+
 func GetOnlinePlayers() int {
 	redisConnection := Databases.StartRedis().Get()
 
@@ -113,9 +132,22 @@ func GetOnlinePlayers() int {
 }
 
 func GetMaxPlayers() int {
-	var settings = ReadSettingsFile()
+	db := Databases.StartPostgres()
 
-	return int(settings["max_players"].(float64))
+	rows, err := db.Query("SELECT \"slots\" FROM \"applications\" WHERE \"name\"='nyrah'")
+
+	if err != nil {
+		return 0
+	}
+
+	var maxPlayers int
+
+	_ = rows.Scan(maxPlayers)
+
+	defer rows.Close()
+	defer db.Close()
+
+	return maxPlayers
 }
 
 func GetFavicon() (string, error) {

@@ -228,9 +228,7 @@ func canJoin(name string) bool {
 
 		_ = rows.Scan(&group_name)
 
-		log.Println("Grupo de", name, " ->", group_name)
-
-		if group_name == "MASTER" || group_name == "DIRECTOR" || group_name == "MANAGER" || group_name == "ADMINISTRATOR" || group_name == "MODERATOR" || group_name == "HELPER" {
+		if Config.IsGroupWhitelisted(group_name) {
 			return true
 		}
 	}
