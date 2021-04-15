@@ -12,6 +12,8 @@ func GetProxyAddress(key string) string {
 
 	row, err := db.Query("SELECT \"address\", \"port\" FROM \"applications\" WHERE \"name\"='" + key + "'")
 
+	defer db.Close()
+
 	if err != nil {
 		log.Println(err)
 	}
@@ -20,11 +22,10 @@ func GetProxyAddress(key string) string {
 	var port int
 
 	if row.Next() {
-		_ = row.Scan(&address, &port)
+		row.Scan(&address, &port)
 	}
 
-	_ = row.Close()
-	_ = db.Close()
+	defer row.Close()
 
 	return fmt.Sprintf("%s:%d", address, port)
 }

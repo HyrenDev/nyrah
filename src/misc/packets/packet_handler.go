@@ -111,6 +111,8 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 
 				rows, err := db.Query("SELECT \"name\" FROM \"applications\" WHERE \"application_type\"='PROXY';")
 
+				defer db.Close()
+
 				if err != nil {
 					return err
 				}
@@ -134,7 +136,6 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 				}
 
 				defer rows.Close()
-				defer db.Close()
 
 				if len(proxies) == 0 {
 					disconnectBecauseNotHaveProxyToSend(
@@ -195,11 +196,12 @@ func canJoin(name string) bool {
 		),
 	)
 
+	defer db.Close()
+
 	if err != nil {
 		log.Println(err)
 
 		defer rows.Close()
-		defer db.Close()
 		return false
 	}
 
@@ -207,9 +209,11 @@ func canJoin(name string) bool {
 
 	if rows.Next() {
 		rows.Scan(&id)
-
-		defer rows.Close()
 	}
+
+	defer rows.Close()
+
+	db = Databases.StartPostgres()
 
 	rows, err = db.Query(
 		fmt.Sprintf(
@@ -218,15 +222,19 @@ func canJoin(name string) bool {
 		),
 	)
 
+	defer db.Close()
+
 	if err != nil {
 		log.Println(err)
+
+		defer rows.Close()
 		return false
 	}
 
 	for next := rows.Next(); next; next = rows.Next() {
 		var group_name string
 
-		_ = rows.Scan(&group_name)
+		rows.Scan(&group_name)
 
 		if Config.IsGroupWhitelisted(group_name) {
 			return true
