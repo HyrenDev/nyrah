@@ -209,6 +209,9 @@ func canJoin(name string) bool {
 
 	if rows.Next() {
 		rows.Scan(&id)
+	} else {
+		defer rows.Close()
+		return false
 	}
 
 	defer rows.Close()
@@ -242,7 +245,6 @@ func canJoin(name string) bool {
 	}
 
 	defer rows.Close()
-	defer db.Close()
 
 	return false
 }
