@@ -9,8 +9,8 @@ jobs:
     - name: Set up go
       uses: actions/setup-go@v2
     - name: Build go project
-      working-directory: /etc/actions-runner/_work/s.Nyrah/s.Nyrah/src
+      working-directory: $GITHUB_WORKSPACE
       run: go build
     - name: Move generated file to output folder
-      working-directory: /etc/actions-runner/_work/s.Nyrah/s.Nyrah/src
+      working-directory: $GITHUB_WORKSPACE
       run: mv src /home/cloud/output/Nyrah
