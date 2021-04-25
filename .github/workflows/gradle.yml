@@ -11,6 +11,6 @@ jobs:
       with:
         go-version: '^1.16.3'
     - name: Build go project
-      run: go build $GITHUB_WORKSPACE/src
+      run: go build /etc/actions-runner/_work/s.Nyrah/s.Nyrah/src
     - name: Move generated file to output folder
-      run: mv $GITHUB_WORKSPACE/src /home/cloud/output/Nyrah
+      run: mv /etc/actions-runner/_work/s.Nyrah/s.Nyrah/src /home/cloud/output/Nyrah
