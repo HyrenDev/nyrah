@@ -9,7 +9,7 @@ jobs:
     - name: Set up go
       uses: actions/setup-go@v2
     - name: Checkout project folder
-      run: cd $GITHUB_WORKSPACE/src/
+      run: cd ${GITHUB_WORKSPACE}/src/
     - name: Build go project
       run: go build
     - name: Move generated file to output folder
