@@ -8,9 +8,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Set up go
       uses: actions/setup-go@v2
-    - name: Navigate to project folders
-      run: cd /etc/actions-runner/_work/s.Nyrah/s.Nyrah/
     - name: Build go project
-      run: go build src
+      run: cd /etc/actions-runner/_work/s.Nyrah/s.Nyrah/ && go build src
     - name: Move generated file to output folder
-      run: mv src /home/cloud/output/Nyrah
+      run: cd /etc/actions-runner/_work/s.Nyrah/s.Nyrah/ && mv src /home/cloud/output/Nyrah
