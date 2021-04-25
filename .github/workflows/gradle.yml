@@ -9,6 +9,6 @@ jobs:
     - name: Set up go
       uses: actions/setup-go@v2
     - name: Build go project
-      run: cd /etc/actions-runner/_work/s.Nyrah/s.Nyrah/ && go build src
+      run: cd /etc/actions-runner/_work/s.Nyrah/s.Nyrah/src/ && go build
     - name: Move generated file to output folder
-      run: cd /etc/actions-runner/_work/s.Nyrah/s.Nyrah/ && mv src /home/cloud/output/Nyrah
+      run: cd /etc/actions-runner/_work/s.Nyrah/s.Nyrah/src/ && mv src /home/cloud/output/Nyrah
