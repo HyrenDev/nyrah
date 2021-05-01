@@ -26,7 +26,7 @@ jobs:
   nyrah-deploy:
     runs-on: ubuntu-latest
 
-    setps:
+    steps:
       - name: Deploy to dedicated
         run: sshpass -p "$DEDICATED_1_PASSWORD" scp -P $DEDICATED_1_PORT /var/tmp/test $DEDICATED_1_HOST_USER@DEDICATED_1_HOST_ADDRESS:/data
         env:
