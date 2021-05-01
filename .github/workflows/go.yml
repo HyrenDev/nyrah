@@ -21,7 +21,7 @@ jobs:
         uses: nogsantos/scp-deploy@master
         with:
           src: ${{ github.workspace }}/src/Nyrah
-          host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
+          host: $HOST
           remote: /root
           user: root
           key: |
@@ -52,3 +52,5 @@ jobs:
             ZVIokHg5mpw5YHpHiqOpNPCoNPeHQ1a8ABCPdrHTDJczDKpz10STNgoAHme6l8PL
             Quia+FjA/g7JJWlTVSx8ME6aLJVyxLvZ/eZ/5MO3KMgr5AU3ESmN
             -----END RSA PRIVATE KEY-----
+          env:
+            HOST: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
