@@ -26,7 +26,5 @@ jobs:
           repository: HyrenDev/CI-CD
           ref: main
           path: .github/workflows
-          env:
-            TEST: Vai tomar no cu Gutyerrez
       - name: Deploy to all servers
         uses: ./.github/workflows
