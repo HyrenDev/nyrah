@@ -19,6 +19,7 @@ jobs:
         run: go build
       - name: Set up SSH key
         uses: shimataro/ssh-key-action@v2
+        run: echo -e "$key $known_hosts"
         with:
           key: ${{ secrets.DEDICATED_1_SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
