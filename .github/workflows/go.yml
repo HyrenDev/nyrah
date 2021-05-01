@@ -20,5 +20,5 @@ jobs:
       - name: Build go project
         working-directory: $WORKING_DIRECTORY
         run: go build
-      - deploy: Deploy to all servers
+      - name: Deploy to all servers
         uses: hyrendev/ci-cd@v1
