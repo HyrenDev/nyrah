@@ -28,8 +28,9 @@ jobs:
 #          target: /root
       - name: Deploy to all servers
         uses: nogsantos/scp-deploy@master
+        working-directory: ${{ github.workspace }}/src
         with:
-          src: ${{ github.workspace }}/src
+          src: Nyrah
           host: 149.56.242.214
           remote: /root
           user: root
