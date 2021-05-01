@@ -19,9 +19,8 @@ jobs:
         run: go build
       - name: Deploy to all servers
         uses: nogsantos/scp-deploy@master
-        working-directory: ${{ github.workspace }}/src
         with:
-          src: Nyrah
+          src: ${{ github.workspace }}/src/Nyrah
           host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
           remote: /root
           user: root
