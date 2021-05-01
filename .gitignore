@@ -3,3 +3,7 @@ src/*.pid
 
 *.exe
 *.iml
+
+pkg/
+
+go.sum
