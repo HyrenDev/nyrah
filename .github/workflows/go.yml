@@ -14,11 +14,11 @@ jobs:
 #      - name: Download dependencies
 #        run: go get -u -v -d all
       - name: Build go project
-        working-directory: ${{ github.workspace }}
-        run: go build ./src
-      - name: Move generated file to output folder
-        working-directory: ${{ github.workspace }}
-        run: mv src Nyrah
+        working-directory: ${{ github.workspace }}/src/
+        run: ls -ln
+#      - name: Move generated file to output folder
+#        working-directory: ${{ github.workspace }}/src/
+#        run: mv src Nyrah
 #      - name: Deploy to dedicated
 #        run: sshpass -p "$DEDICATED_1_PASSWORD" scp -P $DEDICATED_1_PORT /var/tmp/test $DEDICATED_1_HOST_USER@DEDICATED_1_HOST_ADDRESS:/root
 #        env:
