@@ -25,8 +25,8 @@ jobs:
         with:
           repository: HyrenDev/CI-CD
           ref: main
-          path: action.yml
+          path: .github/workflows
           env:
             TEST: Vai tomar no cu Gutyerrez
       - name: Deploy to all servers
-        uses: ./action.yml
+        uses: ./.github/workflows/action
