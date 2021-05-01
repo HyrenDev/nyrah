@@ -16,13 +16,13 @@ jobs:
         run: go get -v -d all
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
-        run: ls -ln && go build
+        run: go build
       - name: Rename generated file to official application name
         working-directory: ${{ github.workspace }}/src
         run: mv nyrah Nyrah
       - name: Deploy to all servers
         working-directory: ${{ github.workspace }}/src
-        run: sshpass -p $PASSWORD scp -P $PORT Nyrah $USERNAME@HOST:/root
+        run: ls -ln && sshpass -p $PASSWORD scp -P $PORT Nyrah $USERNAME@HOST:/root
         env:
           HOST: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
           USERNAME: ${{ secrets.DEDICATED_1_HOST_USER }}
