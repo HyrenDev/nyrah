@@ -34,3 +34,4 @@ jobs:
           remote: /root
           user: ${{ secrets.DEDICATED_1_USER }}
           key: ${{ secrets.DEDICATED_1_SSH_KEY }}
+          key_path: /root/.ssh
