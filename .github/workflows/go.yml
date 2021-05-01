@@ -17,9 +17,13 @@ jobs:
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
         run: go build
+      - name: deub
+        run: echo -e "$key $known_hosts"
+        env:
+          key: ${{ secrets.DEDICATED_1_SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: Set up SSH key
         uses: shimataro/ssh-key-action@v2
-        run: echo -e "$key $known_hosts"
         with:
           key: ${{ secrets.DEDICATED_1_SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
