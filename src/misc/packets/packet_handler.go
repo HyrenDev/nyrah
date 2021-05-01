@@ -1,21 +1,21 @@
 package packets
 
 import (
-	"../../../lib/minecraft/chat"
-	"../../../lib/minecraft/protocol"
-	"../../../lib/minecraft/protocol/codecs"
-	"../../../lib/minecraft/protocol/packet"
 	"errors"
 	"fmt"
 	"log"
+	"net/hyren/nyrah/minecraft/chat"
+	"net/hyren/nyrah/minecraft/protocol"
+	"net/hyren/nyrah/minecraft/protocol/codecs"
+	"net/hyren/nyrah/minecraft/protocol/packet"
 	"reflect"
 	"strings"
 
-	ProxyApp "../../applications"
-	Databases "../../databases"
-	Connection "../connection"
-	NyrahConstants "../constants"
-	Config "../utils"
+	Connection "net/hyren/nyrah/misc/connection"
+	Constants "net/hyren/nyrah/misc/constants"
+	Config "net/hyren/nyrah/misc/utils"
+	ProxyApp "net/hyren/nyrah/applications"
+	Databases "net/hyren/nyrah/databases"
 )
 
 func HandlePackets(connection *protocol.Connection, holder packet.Holder) error {
@@ -170,7 +170,7 @@ func disconnectBecauseNotHaveProxyToSend(connection *protocol.Connection) {
 	connection.Disconnect(chat.TextComponent{
 		Text: fmt.Sprintf(
 			"%s\n\n§r§cNão foi possível localizar um proxy para enviar você.",
-			NyrahConstants.SERVER_PREFIX,
+			Constants.SERVER_PREFIX,
 		),
 	})
 }
@@ -179,7 +179,7 @@ func disconnectBecauseMaintenanceModeIsEnabled(connection *protocol.Connection) 
 	connection.Disconnect(chat.TextComponent{
 		Text: fmt.Sprintf(
 			"%s\n\n§r§cO servidor atualmente encontra-se em manutenção.",
-			NyrahConstants.SERVER_PREFIX,
+			Constants.SERVER_PREFIX,
 		),
 	})
 }

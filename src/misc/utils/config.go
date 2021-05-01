@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"../../../lib/minecraft/chat"
-	Databases "../../databases"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -10,8 +8,11 @@ import (
 	"github.com/patrickmn/go-cache"
 	"io/ioutil"
 	"log"
+	"net/hyren/nyrah/minecraft/chat"
 	"os"
 	"time"
+
+	Databases "net/hyren/nyrah/databases"
 )
 
 var (

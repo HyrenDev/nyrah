@@ -1,10 +1,10 @@
 package proxy
 
 import (
-	"../../../lib/minecraft"
 	"log"
+	"net/hyren/nyrah/minecraft"
 
-	PacketHandler "../packets"
+	PacketHandler "net/hyren/nyrah/misc/packets"
 )
 
 func CreateServer(address string, port int) {

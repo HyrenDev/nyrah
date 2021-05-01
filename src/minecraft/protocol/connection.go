@@ -1,13 +1,13 @@
 package protocol
 
 import (
-	"../chat"
-	"../util"
-	"./codecs"
-	"./packet"
 	"bytes"
 	"io"
 	"net"
+	"net/hyren/nyrah/minecraft/chat"
+	"net/hyren/nyrah/minecraft/protocol/codecs"
+	"net/hyren/nyrah/minecraft/protocol/packet"
+	"net/hyren/nyrah/minecraft/util"
 	"reflect"
 )
 

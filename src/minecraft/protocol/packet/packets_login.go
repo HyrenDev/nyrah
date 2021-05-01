@@ -1,25 +1,25 @@
 package packet
 
 import (
-	"../../chat"
-	"../codecs"
+	chat2 "net/hyren/nyrah/minecraft/chat"
+	codecs2 "net/hyren/nyrah/minecraft/protocol/codecs"
 )
 
 type LoginStart struct {
-	Username codecs.String
+	Username codecs2.String
 }
 
 func (_ LoginStart) ID() int { return 0x00 }
 
 type LoginSuccess struct {
-	UUID     codecs.String
-	Username codecs.String
+	UUID     codecs2.String
+	Username codecs2.String
 }
 
 func (_ LoginSuccess) ID() int { return 0x02 }
 
 type LoginDisconnect struct {
-	Chat chat.TextComponent
+	Chat chat2.TextComponent
 }
 
 func (_ LoginDisconnect) ID() int { return 0x00 }

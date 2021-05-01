@@ -1,8 +1,8 @@
 package packet
 
 import (
-	"../../chat"
-	"../codecs"
+	chat2 "net/hyren/nyrah/minecraft/chat"
+	codecs2 "net/hyren/nyrah/minecraft/protocol/codecs"
 )
 
 type StatusRequest struct{}
@@ -28,20 +28,20 @@ type StatusResponse struct {
 
 		Favicon string `json:"favicon"`
 
-		Description chat.TextComponent `json:"description"`
+		Description chat2.TextComponent `json:"description"`
 	}
 }
 
 func (_ StatusResponse) ID() int { return 0x00 }
 
 type StatusPing struct {
-	Payload codecs.Long
+	Payload codecs2.Long
 }
 
 func (_ StatusPing) ID() int { return 0x01 }
 
 type StatusPong struct {
-	Payload codecs.Long
+	Payload codecs2.Long
 }
 
 func (_ StatusPong) ID() int { return 0x01 }

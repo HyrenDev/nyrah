@@ -1,9 +1,9 @@
 package protocol
 
 import (
-	"./packet"
 	"bytes"
 	"errors"
+	"net/hyren/nyrah/minecraft/protocol/packet"
 	"reflect"
 )
 

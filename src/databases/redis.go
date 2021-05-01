@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	Env "../environment"
+	Env "net/hyren/nyrah/environment"
 )
 
 func StartRedis() *redis.Pool {

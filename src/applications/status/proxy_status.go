@@ -1,12 +1,13 @@
 package status
 
 import (
-	Databases "../../databases"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"net"
+
+	Databases "net/hyren/nyrah/databases"
 )
 
 type ApplicationStatus struct {

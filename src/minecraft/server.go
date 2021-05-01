@@ -1,12 +1,12 @@
 package minecraft
 
 import (
-	"./protocol"
-	"./protocol/packet"
 	"errors"
 	"fmt"
 	"log"
 	"net"
+	"net/hyren/nyrah/minecraft/protocol"
+	"net/hyren/nyrah/minecraft/protocol/packet"
 )
 
 var NoHandlerException = errors.New("No packet handler has been specified")
