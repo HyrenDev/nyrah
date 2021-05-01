@@ -1,7 +1,7 @@
 package protocol
 
 import (
-	"../protocol/packet"
+	"./packet"
 	"bytes"
 	"errors"
 	"reflect"

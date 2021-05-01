@@ -2,9 +2,9 @@ package protocol
 
 import (
 	"../chat"
-	"../protocol/codecs"
-	"../protocol/packet"
 	"../util"
+	"./codecs"
+	"./packet"
 	"bytes"
 	"io"
 	"net"

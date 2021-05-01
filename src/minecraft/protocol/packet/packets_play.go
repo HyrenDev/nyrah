@@ -2,7 +2,7 @@ package packet
 
 import (
 	"../../chat"
-	"../../protocol/codecs"
+	"../codecs"
 )
 
 type PlayKeepAlive struct {

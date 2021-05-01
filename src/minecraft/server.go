@@ -1,8 +1,8 @@
 package minecraft
 
 import (
-	"../minecraft/protocol"
-	"../minecraft/protocol/packet"
+	"./protocol"
+	"./protocol/packet"
 	"errors"
 	"fmt"
 	"log"

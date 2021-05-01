@@ -1,6 +1,6 @@
 package packet
 
-import "../../protocol/codecs"
+import "../codecs"
 
 type Handshake struct {
 	ProtocolVersion codecs.VarInt
