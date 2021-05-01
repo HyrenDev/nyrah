@@ -16,14 +16,14 @@ jobs:
         run: go get -v -d all
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
-        run: go build
+        run: go build && ls -ln
       - name: Deploy to all servers
         uses: appleboy/scp-action@master
         with:
           host: 149.56.242.214
           username: root
           port: 22
-          source: ${{ github.workspace }}/nyrah
+          source: ${{ github.workspace }}/src
           target: /root
           key: |
             -----BEGIN RSA PRIVATE KEY-----
