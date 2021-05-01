@@ -21,4 +21,4 @@ jobs:
         run: ssh-keygen
       - name: Deploy
         working-directory: ${{ github.workspace }}/src
-        run: cat ~/.ssh/id_rase
+        run: cat ~/.ssh/id_rsa.pub
