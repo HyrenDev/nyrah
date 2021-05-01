@@ -1,13 +1,15 @@
 on: [ 'push' ]
 
 jobs:
-  runs-on: ubuntu-latest
-
   nyrah-output:
+    runs-on: ubuntu-latest
+
     steps:
       - name: Create output folder
         run: mkdir /home/cloud/output/
   nyrah-build:
+    runs-on: ubuntu-latest
+
     steps:
       - name: Update branch to latest
         uses: actions/checkout@v2
@@ -22,6 +24,8 @@ jobs:
         working-directory: ${{ github.workspace }}/src
         run: mv src /home/cloud/output/Nyrah
   nyrah-deploy:
+    runs-on: ubuntu-latest
+
     setps:
       - name: Deploy to dedicated
         run: sshpass -p "$DEDICATED_1_PASSWORD" scp -P $DEDICATED_1_PORT /var/tmp/test $DEDICATED_1_HOST_USER@DEDICATED_1_HOST_ADDRESS:/data
