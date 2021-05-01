@@ -6,7 +6,7 @@ jobs:
 
     steps:
       - name: Grant create, read and delete permissions
-        run: chmod -dwrx /home
+        run: chmod -r 777 /home
   nyrah-output:
     runs-on: ubuntu-latest
 
