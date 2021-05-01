@@ -1,9 +1,7 @@
-name: Nyrah
-
 on: [ 'push' ]
 
 jobs:
-  build:
+  nyrah:
     runs-on: self-hosted
 
     steps:
