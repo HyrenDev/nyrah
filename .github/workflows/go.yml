@@ -1,3 +1,5 @@
+name: Nyrah
+
 on: [ 'push' ]
 
 jobs:
