@@ -29,4 +29,4 @@ jobs:
           env:
             TEST: Vai tomar no cu Gutyerrez
       - name: Deploy to all servers
-        uses: action.yml
+        uses: ./action.yml
