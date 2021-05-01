@@ -17,11 +17,15 @@ jobs:
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
         run: go build
-      - name: Deploy
-        working-directory: ${{ github.workspace }}/src
-        run: $SECRET_KEY < ~/.ssh/id_rsa
-        env:
-          SECRET_KEY: |
+      - name: Deploy to all servers
+        uses: appleboy/scp-action@master
+        with:
+          host: 149.56.242.214
+          username: root
+          port: 22
+          source: ${{ github.workspace }}/nyrah
+          target: /root
+          key: |
             -----BEGIN RSA PRIVATE KEY-----
             MIIEowIBAAKCAQEAtvuzPSXUsrQjnUMLOIxAns8nT+xaxoHWuvz/2MrCJp34E3is
             Jqd2yRGFMIUzbzOceN1ylQ7lVLZ4zys/zLM3846OqxxnlMicQ+AcMCGy06J/T+BA
