@@ -20,5 +20,5 @@ jobs:
       - name: Checkout CI-CD
         uses: nick-invision/private-action-loader@v3
         with:
-        pal-repo-token: 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
-        pal-repo-name: hyrendev/ci-cd
+          pal-repo-token: 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
+          pal-repo-name: hyrendev/ci-cd
