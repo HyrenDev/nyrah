@@ -15,7 +15,7 @@ jobs:
 #        run: go get -u -v -d all
       - name: Build go project
         working-directory: ${{ github.workspace }}/src/
-        run: ls -ln
+        run: ls -ln && go build
 #      - name: Move generated file to output folder
 #        working-directory: ${{ github.workspace }}/src/
 #        run: mv src Nyrah
