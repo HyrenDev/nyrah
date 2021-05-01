@@ -19,7 +19,7 @@ jobs:
         run: ls -ln && go build
       - name: Rename generated file to official application name
         working-directory: ${{ github.workspace }}/src
-        run: mv src Nyrah
+        run: ls -ln && mv src Nyrah
       - name: Deploy to all servers
         run: sshpass -p $PASSWORD scp -P $PORT Nyrah $USERNAME@HOST:/root
         env:
