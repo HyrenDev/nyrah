@@ -2,6 +2,8 @@ on: [ 'push' ]
 
 jobs:
   nyrah-permissions:
+    runs-on: ubuntu-latest
+
     steps:
       - name: Grant create, read and delete permissions
         run: chmod -dwrx /home
@@ -18,6 +20,8 @@ jobs:
       - name: Update branch to latest
         uses: actions/checkout@v2
   nyrah-build:
+    runs-on: ubuntu-latest
+
     steps:
       - name: Set up go
         uses: actions/setup-go@v2
@@ -27,6 +31,8 @@ jobs:
         working-directory: ${{ github.workspace }}/src
         run: go build
   nyrah-post:
+    runs-on: ubuntu-latest
+
     steps:
       - name: Move generated file to output folder
         working-directory: ${{ github.workspace }}/src
