@@ -7,8 +7,8 @@ jobs:
     steps:
       - name: Get current repository
         run: echo $(dirname ${0})
-#      - name: Grant create, read and delete permissions
-#        run: chmod -r 777 /home
+      - name: Grant create, read and delete permissions
+        run: chmod -r 777 /home
 #  nyrah-output:
 #    runs-on: ubuntu-latest
 #
