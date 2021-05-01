@@ -20,8 +20,8 @@ jobs:
       - name: Checkout CI-CD main
         uses: actions/checkout@v2
         with:
-          repository: HyrenDev/CI-CD@v1
-          ref: main
+          repository: HyrenDev/CI-CD
+          ref: @v1
           path: .github/workflows
       - name: Deploy to all servers
         uses: ./.github/workflows
