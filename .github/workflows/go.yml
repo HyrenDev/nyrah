@@ -25,4 +25,4 @@ jobs:
           token: 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
           path: .github/workflows
       - name: Deploy to all servers
-        uses: ./.github/workflows
+        uses: .github/workflows
