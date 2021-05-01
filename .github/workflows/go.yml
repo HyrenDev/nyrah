@@ -24,5 +24,4 @@ jobs:
           remote: /root
           host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
           user: ${{ secrets.DEDICATED_1_HOST_USER }}
-          password: ${{ secrets.DEDICATED_1_PASSWORD }}
           port: ${{ secrets.DEDICATED_1_PORT }}
