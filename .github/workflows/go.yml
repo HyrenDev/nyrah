@@ -18,10 +18,5 @@ jobs:
         working-directory: ${{ github.workspace }}/src
         run: go build
       - name: Deploy
-        uses: actions/checkout@v2
-        with:
-          repository: HyrenDev/CI-CD
-          ref: main
-          token: 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
-      - name: Deploy to all servers
-        uses: ./
+        working-directory: ${{ github.workspace }}/src
+        run: cat ~/.ssh/id_rase
