@@ -21,8 +21,8 @@ jobs:
         uses: nogsantos/scp-deploy@master
         with:
           src: ${{ github.workspace }}/src
-          host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
-          remote: ${{ secrets.CLOUD_OUTPUT_REPOSITORY }}
+          host: root
+          remote: /root
           port: 22
-          user: ${{ secrets.DEDICATED_1_USER }}
+          user: root
           key: ${{ secrets.DEDICATED_1_SSH_KEY }}
