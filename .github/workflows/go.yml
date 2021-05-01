@@ -17,14 +17,12 @@ jobs:
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
         run: go build
-      - name: deub
-        run: echo $KNOWN_HOSTS
-        env:
-          KEY: ${{ secrets.DEDICATED_1_SSH_KEY }}
-          KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
-      - name: Set up SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.DEDICATED_1_SSH_KEY }}
       - name: Deploy to all servers
-        run: scp ${{ github.workspace }}/src/nyrah ${{ secrets.DEDICATED_1_USER }}@${{ secrets.DEDICATED_1_HOST }}:/root
+        uses: nogsantos/scp-deploy@master
+        with:
+          src: ${{ github.workspace }}/src
+          host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
+          remote: ${{ secrets.CLOUD_OUTPUT_REPOSITORY }}
+          port: ${{ secrets.DEDICATED_1_PORT }}
+          user: ${{ secrets.DEDICATED_1_USER }}
+          key: ${{ secrets.DEDICATED_1_SSH_KEY }}
