@@ -4,6 +4,13 @@ jobs:
   nyrah-build:
     runs-on: ubuntu-latest
 
+    env:
+      HOST: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
+      USERNAME: ${{ secrets.DEDICATED_1_HOST_USER }}
+      PASSWORD: ${{ secrets.DEDICATED_1_PASSWORD }}
+      PORT: ${{ secrets.DEDICATED_1_PORT }}
+      PROJECT_FOLDER: ${{ github.workspace }}/src
+
     steps:
       - name: Update branch to latest
         uses: actions/checkout@v2
@@ -12,17 +19,11 @@ jobs:
         with:
           go-version: ^1.16.3
       - name: Download dependencies
-        working-directory: ${{ github.workspace }}/src
+        working-directory: $PROJECT_FOLDER
         run: go get -v -d all
       - name: Build go project
-        working-directory: ${{ github.workspace }}/src
+        working-directory: $PROJECT_FOLDER
         run: go build
       - name: Deploy to all servers
-        working-directory: ${{ github.workspace }}/src
-        run: find nyrah && sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/nyrah $USERNAME@$HOST:/root/Nyrah
-        env:
-          HOST: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
-          USERNAME: ${{ secrets.DEDICATED_1_HOST_USER }}
-          PASSWORD: ${{ secrets.DEDICATED_1_PASSWORD }}
-          PORT: ${{ secrets.DEDICATED_1_PORT }}
-          PROJECT_FOLDER: ${{ github.workspace }}/src
+        working-directory: $PROJECT_FOLDER
+        run: find $PROJECT_FOLDER/nyrah # && sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/nyrah $USERNAME@$HOST:/root/Nyrah
