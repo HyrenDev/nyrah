@@ -1,8 +1,8 @@
 package utils
 
 import (
+	"../../../lib/minecraft/chat"
 	Databases "../../databases"
-	"../../minecraft/chat"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"

@@ -1,17 +1,17 @@
 package main
 
 import (
-	"log"
-
 	Proxy "./misc/proxy"
-	Config "./misc/utils"
+	Env "./misc/utils"
+
+	"log"
 )
 
 func main() {
 	log.Println("Starting proxy server")
 
 	Proxy.CreateServer(
-		Config.GetServerAddress(),
-		Config.GetServerPort(),
+		Env.GetServerAddress(),
+		Env.GetServerPort(),
 	)
 }

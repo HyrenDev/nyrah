@@ -1,10 +1,10 @@
 package packets
 
 import (
-	"../../minecraft/chat"
-	"../../minecraft/protocol"
-	"../../minecraft/protocol/codecs"
-	"../../minecraft/protocol/packet"
+	"../../../lib/minecraft/chat"
+	"../../../lib/minecraft/protocol"
+	"../../../lib/minecraft/protocol/codecs"
+	"../../../lib/minecraft/protocol/packet"
 	"errors"
 	"fmt"
 	"log"
@@ -30,6 +30,8 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 
 			connection.Protocol = uint16(handshake.ProtocolVersion)
 			connection.State = protocol.State(uint8(handshake.NextState))
+
+			println(handshake.ServerAddress)
 
 			handshake.NextState = 2
 			handshake.ServerAddress = codecs.String(
@@ -90,13 +92,9 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			loginStart, ok := holder.(packet.LoginStart)
 
 			if ok {
-				loginSuccess, _ := holder.(packet.LoginSuccess)
-
-				log.Println(loginSuccess.UUID)
-
 				name := string(loginStart.Username)
 
-				log.Println("Conexão recebida de", name)
+				log.Println("Conexão recebida de [", name, "/", "]")
 
 				if Config.IsMaintenanceModeEnabled() == true && !canJoin(
 					name,

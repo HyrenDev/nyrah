@@ -1,7 +1,7 @@
 package proxy
 
 import (
-	"../../minecraft"
+	"../../../lib/minecraft"
 	"log"
 
 	PacketHandler "../packets"

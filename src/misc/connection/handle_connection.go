@@ -1,7 +1,7 @@
 package connection
 
 import (
-	"../../minecraft/protocol"
+	"../../../lib/minecraft/protocol"
 	"io"
 	"net"
 
