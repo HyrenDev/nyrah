@@ -18,7 +18,7 @@ jobs:
         working-directory: ${{ github.workspace }}/src
         run: go build
       - name: deub
-        run: echo -e "Chave >$KEY< Hosts >$KNOWN_HOSTS<"
+        run: echo $KNOWN_HOSTS
         env:
           KEY: ${{ secrets.DEDICATED_1_SSH_KEY }}
           KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
