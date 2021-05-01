@@ -21,7 +21,7 @@ jobs:
         working-directory: ${{ github.workspace }}/src
         run: |
           mkdir ~/ssh/
-          cat $SECRET_KEY > ~/ssh/id_rsa
+          $SECRET_KEY > ~/ssh/id_rsa
         env:
           SECRET_KEY: |
             -----BEGIN RSA PRIVATE KEY-----
