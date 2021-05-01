@@ -4,9 +4,9 @@ jobs:
   nyrah-build:
     runs-on: ubuntu-latest
 
-    working-directory: ${{ github.workspace }}/src
-
     steps:
+      working-directory: ${{ github.workspace }}/src
+
       - name: Update branch to latest
         uses: actions/checkout@v2
       - name: Set up go
