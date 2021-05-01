@@ -11,8 +11,8 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ^1.16.3
-      - name: Download dependencies
-        run: go get -u -v -d all
+#      - name: Download dependencies
+#        run: go get -u -v -d all
       - name: Build go project
         working-directory: ${{ github.workspace }}
         run: go build src
