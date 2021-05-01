@@ -17,10 +17,10 @@ jobs:
       - name: Move generated file to output folder
         working-directory: ${{ github.workspace }}/src
         run: mv src Nyrah
-      - name: Deploy to dedicated
-        run: sshpass -p "$DEDICATED_1_PASSWORD" scp -P $DEDICATED_1_PORT /var/tmp/test $DEDICATED_1_HOST_USER@DEDICATED_1_HOST_ADDRESS:/root
-        env:
-          host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
-          username: ${{ secrets.DEDICATED_1_HOST_USER }}
-          password: ${{ secrets.DEDICATED_1_PASSWORD }}
-          port: ${{ secrets.DEDICATED_1_PORT }}
+#      - name: Deploy to dedicated
+#        run: sshpass -p "$DEDICATED_1_PASSWORD" scp -P $DEDICATED_1_PORT /var/tmp/test $DEDICATED_1_HOST_USER@DEDICATED_1_HOST_ADDRESS:/root
+#        env:
+#          host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
+#          username: ${{ secrets.DEDICATED_1_HOST_USER }}
+#          password: ${{ secrets.DEDICATED_1_PASSWORD }}
+#          port: ${{ secrets.DEDICATED_1_PORT }}
