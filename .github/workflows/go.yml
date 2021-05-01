@@ -25,3 +25,4 @@ jobs:
           host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
           user: ${{ secrets.DEDICATED_1_HOST_USER }}
           port: ${{ secrets.DEDICATED_1_PORT }}
+          key: ${{ secrets.DEDICATED_1_SSH_KEY }}
