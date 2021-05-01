@@ -19,11 +19,11 @@ jobs:
         with:
           go-version: ^1.16.3
       - name: Download dependencies
-        working-directory: $PROJECT_FOLDER
+        working-directory: ${{ github.workspace }}/src
         run: go get -v -d all
       - name: Build go project
-        working-directory: $PROJECT_FOLDER
+        working-directory: ${{ github.workspace }}/src
         run: go build
       - name: Deploy to all servers
-        working-directory: $PROJECT_FOLDER
-        run: find $PROJECT_FOLDER/nyrah # && sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/nyrah $USERNAME@$HOST:/root/Nyrah
+        working-directory: ${{ github.workspace }}/src
+        run: find ${{ github.workspace }}/src/nyrah # && sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/nyrah $USERNAME@$HOST:/root/Nyrah
