@@ -17,14 +17,9 @@ jobs:
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
         run: go build
-      - name: Rename generated file to official application name
-        working-directory: ${{ github.workspace }}/src
-        run: mv nyrah Nyrah
       - name: Deploy to all servers
         working-directory: ${{ github.workspace }}/src
-        run: |
-          echo -e "sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/Nyrah $USERNAME@$HOST:/root"
-          ls -ln && sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/Nyrah $USERNAME@$HOST:/root
+        run: sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/Nyrah $USERNAME@$HOST:/root/Nyrah
         env:
           HOST: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
           USERNAME: ${{ secrets.DEDICATED_1_HOST_USER }}
