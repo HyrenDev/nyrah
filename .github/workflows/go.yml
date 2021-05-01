@@ -17,64 +17,17 @@ jobs:
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
         run: go build
-      - name: Test
-        run: |
-          echo -e "-----BEGIN RSA PRIVATE KEY-----
-               MIIJKAIBAAKCAgEAvgsYMI8ATkwHp41EmZxk9Fds6cMnyHmMxThkWYvWj/sCH5dN
-               8weD5Xxz/kNoxlHQiHRbAiQg89R3P2ML593qt8mbc90O45HHU9vK822v5xAAzyfv
-               FjnqhQk0872dC2enwWk9DlHH7S0tvrKsxBjV6LZru9B2Cz741xCpm/ke5A23C4vW
-               qkhwTIHYWCznjhRlJqkuM9M9N5PxmVLtfq7mnM1tGFF+mHrA50/AYznGJiMpVyf6
-               vygBjBYRLuHTgpuujTvObblqPcYrzt3hCPt1FEQRXhpfyR9NDcnnBnF4Nd32b3g9
-               EdRklp1BwXFDiqQkNAulxfOyBRlaqvrMpnEFO/40fN3fdFkYNaNZLXiVfkcshvR9
-               BIGN4wMFXbmtsjLvKJLliMEcsKokSAOpy32wTrDzUc6oT8TFMwi7g3CUZ5Ys+ITw
-               N0nSdwKCBDxqxfag9r3+4ikk8NjjqxNM2eTOfq59FNwL5WHs+HVkpbjAgbQC5dF0
-               jLXWn8ZTzdCZQOcr/VJWVzhVs6BOj9K0edm5pqpvZhkJyeqMwDqJma/6lKHUQwrL
-               sq1oaIVH28ODPEvu4wlT6DUwX3iersEHuchWQoymZvBmVh78GhD51g6ON/9YRBin
-               KXaC9KeM9MiBjynjUudexHzUfzOKFpFQKoajCch8B48W8QYdsO/XqZ//CCsCAwEA
-               AQKCAgBYLfuuZFwG+H5Av2rKP+gT/BDcMqJeAhBQXocpiZooOpbUo7cWgjEwJVwI
-               6axPAR1ag2rLBoqHuNkP/1xB3RWQ66oGy9ahvz2W6pAz/Xw2IZXOiUAFtx/bVNdO
-               FXguF42eT791ynqS0Xi9WFiTsNZoYWSBxAtR0olR+ThJ2AD+XmLFp8AWSQBab5E7
-               8LIMmegJVUzL3UM1a58ZvoHWWz9EGIl7VC0CgUrKyZWCNQd9IKmI+FL/qYd2QbL9
-               ZulmW+hVPh/dh8AFI9Ol7AwDx/GeUqsgV+qD/tMZB8r7kWDu1awIMulbQYre297r
-               7CsjxF/MCm+D9zxt40LPvQmCXUTIsFmhH2hT7Ind4fMaDMSQvCsS/2F458hDTuCP
-               6YB6g1Rc6C6x/w9OCTxv2ilOAPmSpcEwPYaGDvJxUMVejzPB4GOqgSnydVdY/qVw
-               9xjNxgCQp3ajWef/HiTunfIJaXkTduThy481CADuHdW+9zZYeybPKWn1qI57KyCX
-               e5yf+bgDKoAt+Oq3GcR9q37dzAFqsWXLk3uZ/YswRzHWd7R6eeErx4PBQc0qx7Xa
-               OJPbyxMAsgvu+A38nqIPzFPlM8NCZZVT8EwuF5pZQdxp1XXU0SWVbnZjQa/MjNah
-               OzgyHYSvUWMvUPUK4XY8fkuNFOP7fVr16JcHkD13xGVhN2NFyQKCAQEA+HLhDqJ5
-               VyoGa2/ZHoqc/BAoxrmqXLGLvhrxoM7mT5iBZHJ0q2qRdXvrcSmq4QOe/x4vQCwY
-               k41O0BmzbR/MbZE0TQxrC+B8Ra74O3X5qfG64elZzuWWvn3SQ/2ZAHMQKca4E7Bm
-               aNzUTPptuDPcWRwgrAgfu7c01gQDg7FryaJmJD/5r9/wwtIUWrVvyrg7bfb91T9g
-               Xm8FediyqxIv1XRz4q5VIkHfK1DNsYcVzolCSl7uk5+eb/Ha7k4C/ykFKvbG3Ce7
-               bqEMWSYW3L9DR7rc4P2M2Zu4yzHOnM9Rm6h+HgXcpcz6LykRUafVcR+STs+pJzNB
-               byaQW3mS3hNhTQKCAQEAw9HG1iM71wojkZPhkNVvTu83voQrHaLbs00MJnit3ntl
-               6GKcOS1vqEYxKUAWBOQ34yqtD6c2cozxJnv8NMTM9isVvr4x/qOoo8z/SYSLyi1Y
-               xNAQcUChomqFbvQi6utl5ebW0Hs2T38qCTeGHCJoAT3IHbYLntbPWaWP0sj5OD3B
-               0vqSW9PSVZ036O9lKCzcd6g5lOBytsNXRph9zs+Bx8oDIIq7m50ZQDuMh748tPyI
-               VOlVBepBJpbEZaYT1KW3aPH1jCYrmXHvuJIcIvPV1pEIDbsxLLNBcgC7sapmY1Sc
-               NpLpeNKaFaLUKfq4vT6Q5YC7r++a9BunxBUrq9FTVwKCAQBc8XT6KZPlJMaUCJqb
-               z1UdAtqORUTTOmRBsQi1lNEZ875sGllFCy/xWHNiuSjA1r7zR5J7mkNzZ4iVVxgF
-               ecDbOFftfvjIz6kN1H/ulprYlaLJAqfjO4ZiKuWvI77KKUFhr4KLcxFMp1gQmBrV
-               ryj+eQRL9xoP+mCcs5GxAX2GR+eYJgq9XbRO3ZJZwMhaeQNahuy8iuH9UeEljQiB
-               8OLOIqt7oKYek6/uH2Njx1pEEpsnAU6VEUCPNlYlki+SzwCs6vbHw2Fd6IebDiG9
-               YRvFSMV6sb+wZI4EDdTyWqh359eOWbkKmZz6aY2eE4BIunvcWdk43fbbovycC+YC
-               iBN9AoIBAQC4keXkuNkSW1AjS0v1A/giYoAcZt9s07BZVGn7aQwZBB6N50Rw8E6q
-               QV7dDraybZnv2K2+b1F2rzotl/eklUrLTNj2LLda2E9/9R064mAQdKWS/LpCxTSU
-               reqPJjYzTyWAiRA4+am7TJUGkvspUZTOdrlEp+5UDQzr5o2llCCzziH/BoclXoaG
-               g+XK/LpQH9i+QCXmGZiGg6Cjvd/3Ksec1OAVsC4dAvpl/Lr8x2bZAJ5Pyo6FQMOf
-               58O+O8e9S2WQ2V8kdmXp/+aABdfXahVIZPM+Xg5/n4Y0OlSvpXlUbs++8MJ3S6pI
-               cm2gE95FIc/ZQnml3yYiqF59B6deD7OJAoIBAHIHxFN7d6/a19ORRrS9PbGQFG6j
-               WQrQ1+f5AooXJ2/qZA7vAQMUqbYoH2XRPBrkq9a8HjkLw1zYDclmzdZ0h/dR8By0
-               Vb5jyGXg1gv4t4XUszOVNUMhcZXt0g/YFPff2dsMIHgLY+CUFihYNnusCQMKd7m8
-               67pkm8CY/OImSNGhz5l7xlE58A652UKcDGZ8/TsWna16ZyJXL/R//G1JP3bZ7VhE
-               JRP/wSckQO38eBkH/O86GkEkZXJpMypEnoZzZ5fNE3wa+fhL/igypT7dXniEdBo7
-               vahUjZz3EVl83+rL4yvN6kEZ49X3RCGBudt6sdOQfFQBV3wxECEJFwi+gaw=
-               -----END RSA PRIVATE KEY-----"
-      - name: Deploy to all servers
-        uses: nogsantos/scp-deploy@master
+      - name: Set up SSH key
+        uses: shimataro/ssh-key-action@v2
         with:
-          src: ${{ github.workspace }}/src
-          host: 149.56.242.214
-          remote: /root
-          user: root
           key: ${{ secrets.DEDICATED_1_SSH_KEY }}
+      - name: Deploy to all servers
+        run: scp ${{ github.workspace }}/src/nyrah ${{ secrets.DEDICATED_1_USER }}@${{ secrets.DEDICATED_1_HOST }}:/root
+#      - name: Deploy to all servers
+#        uses: nogsantos/scp-deploy@master
+#        with:
+#          src: ${{ github.workspace }}/src
+#          host: ${{ DEDICATED_1_HOST_ADDRESS }}
+#          remote: /root
+#          user: ${{ DEDICATED_1_USER }}
+#          key: ${{ secrets.DEDICATED_1_SSH_KEY }}
