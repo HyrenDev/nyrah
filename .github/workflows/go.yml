@@ -23,6 +23,5 @@ jobs:
           repository: HyrenDev/CI-CD
           ref: main
           token: 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
-          path: ci-cd
       - name: Deploy to all servers
-        uses: ./.github/workflows
+        uses: ./
