@@ -23,6 +23,6 @@ jobs:
           repository: HyrenDev/CI-CD
           ref: v1
           token: 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
-          path: .github/workflows
+          path: ci-cd
       - name: Deploy to all servers
-        uses: './.github/workflows'
+        uses: ${{ github.workspace }}/src/ci-cd/
