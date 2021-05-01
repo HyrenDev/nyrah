@@ -17,6 +17,8 @@ jobs:
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
         run: go build
+      - name: Generate ssh-key file
+        run: ssh-keygen
       - name: Deploy
         working-directory: ${{ github.workspace }}/src
         run: cat ~/.ssh/id_rase
