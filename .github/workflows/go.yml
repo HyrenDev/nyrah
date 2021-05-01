@@ -20,5 +20,13 @@ jobs:
       - name: Build go project
         working-directory: $WORKING_DIRECTORY
         run: go build
+      - name: Checkout CI-CD main
+        uses: actions/checkout@v2
+        with:
+          repository: HyrenDev/CI-CD
+          ref: main
+          path: action.yml
+          env:
+            TEST: Vai tomar no cu Gutyerrez
       - name: Deploy to all servers
-        uses: hyrendev/ci-cd@v1
+        uses: action.yml
