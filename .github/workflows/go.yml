@@ -17,15 +17,13 @@ jobs:
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
         run: go build && ls -ln
-      - name: Create output directory
-        run: mkdir /home/cloud/output
       - name: Deploy to all servers
         uses: appleboy/scp-action@master
         with:
           host: 149.56.242.214
           username: root
           port: 22
-          source: /home/cloud/output
+          source: ${{ github.workspace }}/src/nyrah
           target: /root/Nyrah
           key: |
             -----BEGIN RSA PRIVATE KEY-----
