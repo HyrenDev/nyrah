@@ -22,7 +22,7 @@ jobs:
         run: mv nyrah Nyrah
       - name: Deploy to all servers
         working-directory: ${{ github.workspace }}/src
-        run: ls -ln && sshpass -p $PASSWORD scp -P $PORT ./Nyrah $USERNAME@HOST:/root
+        run: ls -ln && sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/Nyrah $USERNAME@HOST:/root
         env:
           HOST: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
           USERNAME: ${{ secrets.DEDICATED_1_HOST_USER }}
