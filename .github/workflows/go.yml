@@ -19,9 +19,9 @@ jobs:
         run: go build
       - name: Set up SSH key
         uses: shimataro/ssh-key-action@v2
-          with:
-            key: ${{ secrets.DEDICATED_1_SSH_KEY }}
-            known_hosts: ${{ secrets.KNOWN_HOSTS }}
+        with:
+          key: ${{ secrets.DEDICATED_1_SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: Deploy to all servers
         run: scp $DIRECTORY/src/nyrah root@:149.56.242.214/root
         env:
