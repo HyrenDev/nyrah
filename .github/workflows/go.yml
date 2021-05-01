@@ -18,15 +18,15 @@ jobs:
         working-directory: ${{ github.workspace }}/src
         run: go build
       - name: deub
-        run: echo -e "$key $known_hosts"
+        run: echo -e "Chave >$KEY< Hosts >$KNOWN_HOSTS<"
         env:
-          key: ${{ secrets.DEDICATED_1_SSH_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+          KEY: ${{ secrets.DEDICATED_1_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
       - name: Set up SSH key
         uses: shimataro/ssh-key-action@v2
         with:
-          key: ${{ secrets.DEDICATED_1_SSH_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+          KEY: ${{ secrets.DEDICATED_1_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
       - name: Deploy to all servers
         run: scp $DIRECTORY/src/nyrah root@149.56.242.214:/root
         env:
