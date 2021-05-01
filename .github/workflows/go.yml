@@ -18,12 +18,11 @@ jobs:
         working-directory: ${{ github.workspace }}/src
         run: go build
       - name: Deploy to all servers
-        working-directory: ${{ github.workspace }}/src
-        run: |
-          sshpass -p $PASSWORD scp -P $PORT $DIRECTORY/src/nyrah $USER@:$HOST/root/Nyran
-        env:
-          DIRECTORY: ${{ github.workspace }}
-          PASSWORD: ${{ secrets.DEDICATED_1_PASSWORD }}
-          USER: ${{ secrets.DEDICATED_1_HOST_USER }}
-          HOST: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
-          PORT: ${{ secrets.DEDICATED_1_PORT }}
+        uses: nogsantos/scp-deploy@master
+        with:
+          src: ${{ github.workspace }}/src/nyrah
+          remote: /root
+          host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
+          user: ${{ secrets.DEDICATED_1_HOST_USER }}
+          password: ${{ secrets.DEDICATED_1_PASSWORD }}
+          port: ${{ secrets.DEDICATED_1_PORT }}
