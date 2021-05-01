@@ -25,8 +25,8 @@ jobs:
       - name: Set up SSH key
         uses: shimataro/ssh-key-action@v2
         with:
-          KEY: ${{ secrets.DEDICATED_1_SSH_KEY }}
-          KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
+          key: ${{ secrets.DEDICATED_1_SSH_KEY }}
+#          KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
       - name: Deploy to all servers
         run: scp $DIRECTORY/src/nyrah root@149.56.242.214:/root
         env:
