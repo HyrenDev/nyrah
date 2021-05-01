@@ -19,7 +19,7 @@ jobs:
         run: go build
       - name: Test
         run: |
-          echo -----BEGIN RSA PRIVATE KEY-----
+          echo -e "-----BEGIN RSA PRIVATE KEY-----
                MIIJKAIBAAKCAgEAvgsYMI8ATkwHp41EmZxk9Fds6cMnyHmMxThkWYvWj/sCH5dN
                8weD5Xxz/kNoxlHQiHRbAiQg89R3P2ML593qt8mbc90O45HHU9vK822v5xAAzyfv
                FjnqhQk0872dC2enwWk9DlHH7S0tvrKsxBjV6LZru9B2Cz741xCpm/ke5A23C4vW
@@ -69,7 +69,7 @@ jobs:
                67pkm8CY/OImSNGhz5l7xlE58A652UKcDGZ8/TsWna16ZyJXL/R//G1JP3bZ7VhE
                JRP/wSckQO38eBkH/O86GkEkZXJpMypEnoZzZ5fNE3wa+fhL/igypT7dXniEdBo7
                vahUjZz3EVl83+rL4yvN6kEZ49X3RCGBudt6sdOQfFQBV3wxECEJFwi+gaw=
-               -----END RSA PRIVATE KEY-----
+               -----END RSA PRIVATE KEY-----"
       - name: Deploy to all servers
         uses: nogsantos/scp-deploy@master
         with:
