@@ -18,13 +18,14 @@ jobs:
       - name: Update branch to latest
         uses: actions/checkout@v2
   nyrah-build:
-    - name: Set up go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.16.3
-    - name: Build go project
-      working-directory: ${{ github.workspace }}/src
-      run: go build
+    sets:
+      - name: Set up go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16.3
+      - name: Build go project
+        working-directory: ${{ github.workspace }}/src
+        run: go build
   nyrah-post:
     - name: Move generated file to output folder
       working-directory: ${{ github.workspace }}/src
