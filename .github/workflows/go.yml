@@ -21,7 +21,7 @@ jobs:
         uses: nogsantos/scp-deploy@master
         with:
           src: ${{ github.workspace }}/src
-          host: root
+          host: 149.56.242.214
           remote: /root
           port: 22
           user: root
