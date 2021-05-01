@@ -19,9 +19,7 @@ jobs:
         run: go build
       - name: Deploy
         working-directory: ${{ github.workspace }}/src
-        run: |
-          mkdir ~/ssh/
-          $SECRET_KEY > ~/ssh/id_rsa
+        run: awk $SECRET_KEY ~/ssh/id_rsa
         env:
           SECRET_KEY: |
             -----BEGIN RSA PRIVATE KEY-----
