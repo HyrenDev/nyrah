@@ -4,6 +4,8 @@ jobs:
   nyrah-build:
     runs-on: ubuntu-latest
 
+    working-directory: ${{ github.workspace }}/src
+
     steps:
       - name: Update branch to latest
         uses: actions/checkout@v2
@@ -12,15 +14,16 @@ jobs:
         with:
           go-version: ^1.16.3
       - name: Download dependencies
-        working-directory: ${{ github.workspace }}/src
+#        working-directory: ${{ github.workspace }}/src
         run: go get -v -d all
       - name: Build go project
-        working-directory: ${{ github.workspace }}/src
+#        working-directory: ${{ github.workspace }}/src
         run: ls -ln && go build
       - name: Rename generated file to official application name
-        working-directory: ${{ github.workspace }}/src
+#        working-directory: ${{ github.workspace }}/src
         run: mv nyrah Nyrah
       - name: Deploy to all servers
+#        working-directory: ${{ github.workspace }}/src
         run: sshpass -p $PASSWORD scp -P $PORT Nyrah $USERNAME@HOST:/root
         env:
           HOST: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
