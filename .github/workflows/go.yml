@@ -23,8 +23,8 @@ jobs:
       - name: Deploy to all servers
         working-directory: ${{ github.workspace }}/src
         run: |
-          echo -e "sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/Nyrah $USERNAME@HOST:/root"
-          ls -ln && sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/Nyrah $USERNAME@HOST:/root
+          echo -e "sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/Nyrah $USERNAME@$HOST:/root"
+          ls -ln && sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/Nyrah $USERNAME@$HOST:/root
         env:
           HOST: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
           USERNAME: ${{ secrets.DEDICATED_1_HOST_USER }}
