@@ -17,21 +17,12 @@ jobs:
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
         run: go build
-#      - name: Set up SSH key
-#        uses: appleboy/scp-action@master
-#        with:
-#          host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
-#          username: ${{ secrets.USERNAME }}
-#          key: ${{ secrets.DEDICATED_1_SSH_KEY }}
-#          port: ${{ secrets.PORT }}
-#          source: ${{ github.workspace }}/src
-#          target: /root
       - name: Deploy to all servers
         uses: nogsantos/scp-deploy@master
         working-directory: ${{ github.workspace }}/src
         with:
           src: Nyrah
-          host: 149.56.242.214
+          host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
           remote: /root
           user: root
           key: |
@@ -62,4 +53,3 @@ jobs:
             ZVIokHg5mpw5YHpHiqOpNPCoNPeHQ1a8ABCPdrHTDJczDKpz10STNgoAHme6l8PL
             Quia+FjA/g7JJWlTVSx8ME6aLJVyxLvZ/eZ/5MO3KMgr5AU3ESmN
             -----END RSA PRIVATE KEY-----
-#          key_path: /root/.ssh
