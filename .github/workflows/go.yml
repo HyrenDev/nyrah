@@ -1,52 +1,38 @@
 on: [ 'push' ]
 
 jobs:
-  nyrah-permissions:
+  nyrah-checkout:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get current repository
-        run: echo $(dirname ${0})
-      - name: Grant create, read and delete permissions
-        run: chmod -R 777 /home
-#  nyrah-output:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Create output folder
-#        run: mkdir /home/cloud/output/
-#  nyrah-checkout:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Update branch to latest
-#        uses: actions/checkout@v2
-#  nyrah-build:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Set up go
-#        uses: actions/setup-go@v2
-#        with:
-#          go-version: 1.16.3
-#      - name: Build go project
-#        working-directory: ${{ github.workspace }}/src
-#        run: go build
-#  nyrah-post:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Move generated file to output folder
-#        working-directory: ${{ github.workspace }}/src
-#        run: mv src /home/cloud/output/Nyrah
-#  nyrah-deploy:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Deploy to dedicated
-#        run: sshpass -p "$DEDICATED_1_PASSWORD" scp -P $DEDICATED_1_PORT /var/tmp/test $DEDICATED_1_HOST_USER@DEDICATED_1_HOST_ADDRESS:/data
-#        env:
-#          host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
-#          username: ${{ secrets.DEDICATED_1_HOST_USER }}
-#          password: ${{ secrets.DEDICATED_1_PASSWORD }}
-#          port: ${{ secrets.DEDICATED_1_PORT }}
+      - name: Update branch to latest
+        uses: actions/checkout@v2
+  nyrah-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16.3
+      - name: Build go project
+        working-directory: ${{ github.workspace }}/src
+        run: go build
+  nyrah-post:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Move generated file to output folder
+        working-directory: ${{ github.workspace }}/src
+        run: mv src Nyrah
+  nyrah-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to dedicated
+        run: sshpass -p "$DEDICATED_1_PASSWORD" scp -P $DEDICATED_1_PORT /var/tmp/test $DEDICATED_1_HOST_USER@DEDICATED_1_HOST_ADDRESS:/root
+        env:
+          host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
+          username: ${{ secrets.DEDICATED_1_HOST_USER }}
+          password: ${{ secrets.DEDICATED_1_PASSWORD }}
+          port: ${{ secrets.DEDICATED_1_PORT }}
