@@ -17,17 +17,20 @@ jobs:
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
         run: go build
-      - name: Set up SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.DEDICATED_1_SSH_KEY }}
-      - name: Deploy to all servers
-        run: scp ${{ github.workspace }}/src/nyrah ${{ secrets.DEDICATED_1_USER }}@${{ secrets.DEDICATED_1_HOST }}:/root
-#      - name: Deploy to all servers
-#        uses: nogsantos/scp-deploy@master
+#      - name: Set up SSH key
+#        uses: appleboy/scp-action@master
 #        with:
-#          src: ${{ github.workspace }}/src
-#          host: ${{ DEDICATED_1_HOST_ADDRESS }}
-#          remote: /root
-#          user: ${{ DEDICATED_1_USER }}
+#          host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
+#          username: ${{ secrets.USERNAME }}
 #          key: ${{ secrets.DEDICATED_1_SSH_KEY }}
+#          port: ${{ secrets.PORT }}
+#          source: ${{ github.workspace }}/src
+#          target: /root
+      - name: Deploy to all servers
+        uses: nogsantos/scp-deploy@master
+        with:
+          src: ${{ github.workspace }}/src
+          host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
+          remote: /root
+          user: ${{ secrets.DEDICATED_1_USER }}
+          key: ${{ secrets.DEDICATED_1_SSH_KEY }}
