@@ -20,6 +20,8 @@ jobs:
   nyrah-build:
       - name: Set up go
         uses: actions/setup-go@v2
+        with:
+          go-version: '1.9.3'
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
         run: go build
