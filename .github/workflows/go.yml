@@ -19,4 +19,4 @@ jobs:
         run: go build
       - name: Deploy to all servers
         working-directory: ${{ github.workspace }}/src
-        run: sshpass -p ${{ secrets.DEDICATED_1_PASSWORD }} scp -P ${{ secrets.DEDICATED_1_PORT }} $PROJECT_FOLDER/nyrah ${{ secrets.DEDICATED_1_HOST_USER }}@${{ secrets.DEDICATED_1_HOST_ADDRESS }}:/root/Nyrah # && sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/nyrah $USERNAME@$HOST:/root/Nyrah
+        run: sshpass -p ${{ secrets.DEDICATED_1_PASSWORD }} scp -P ${{ secrets.DEDICATED_1_PORT }} ${{ github.workspace }}/src/nyrah ${{ secrets.DEDICATED_1_HOST_USER }}@${{ secrets.DEDICATED_1_HOST_ADDRESS }}:/root/Nyrah # && sshpass -p $PASSWORD scp -P $PORT $PROJECT_FOLDER/nyrah $USERNAME@$HOST:/root/Nyrah
