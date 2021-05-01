@@ -1,12 +1,12 @@
 package packets
 
 import (
+	"../../minecraft/chat"
+	"../../minecraft/protocol"
+	"../../minecraft/protocol/codecs"
+	"../../minecraft/protocol/packet"
 	"errors"
 	"fmt"
-	"gominet/chat"
-	"gominet/protocol"
-	"gominet/protocol/codecs"
-	"gominet/protocol/packet"
 	"log"
 	"reflect"
 	"strings"

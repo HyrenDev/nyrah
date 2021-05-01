@@ -1,7 +1,7 @@
 package connection
 
 import (
-	"gominet/protocol"
+	"../../minecraft/protocol"
 	"io"
 	"net"
 

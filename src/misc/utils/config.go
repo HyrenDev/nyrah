@@ -2,12 +2,12 @@ package utils
 
 import (
 	Databases "../../databases"
+	"../../minecraft/chat"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"github.com/patrickmn/go-cache"
-	"gominet/chat"
 	"io/ioutil"
 	"log"
 	"os"
