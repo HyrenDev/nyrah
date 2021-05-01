@@ -23,6 +23,6 @@ jobs:
           src: ${{ github.workspace }}/src
           host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
           remote: ${{ secrets.CLOUD_OUTPUT_REPOSITORY }}
-          port: ${{ secrets.DEDICATED_1_PORT }}
+          port: 22
           user: ${{ secrets.DEDICATED_1_USER }}
           key: ${{ secrets.DEDICATED_1_SSH_KEY }}
