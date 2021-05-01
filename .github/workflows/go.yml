@@ -23,7 +23,7 @@ jobs:
           key: ${{ secrets.DEDICATED_1_SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: Deploy to all servers
-        run: scp $DIRECTORY/src/nyrah root@:149.56.242.214/root
+        run: scp $DIRECTORY/src/nyrah root@149.56.242.214:/root
         env:
           DIRECTORY: ${{ github.workspace }}
 #        uses: nogsantos/scp-deploy@master
