@@ -22,4 +22,5 @@ jobs:
         with:
           repository: HyrenDev/CI-CD
           ref: main
+          token: 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
           src: ${{ github.workspace }}/src/nyrah
