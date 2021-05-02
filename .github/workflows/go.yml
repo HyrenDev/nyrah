@@ -21,4 +21,5 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: hyrendev/ci-cd
+          ref: master
           src: ${{ github.workspace }}/src/nyrah
