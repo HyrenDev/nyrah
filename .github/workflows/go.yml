@@ -20,6 +20,6 @@ jobs:
       - name: Deploy to all servers
         uses: actions/checkout@v2
         with:
-          repository: hyrendev/ci-cd
+          repository: HyrenDev/CI-CD
           ref: main
           src: ${{ github.workspace }}/src/nyrah
