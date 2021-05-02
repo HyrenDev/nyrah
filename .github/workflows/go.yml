@@ -18,9 +18,6 @@ jobs:
         working-directory: ${{ github.workspace }}/src
         run: go build && ls -ln
       - name: Deploy to all servers
-        uses: nick-invision/private-action-loader@v3
+        uses: hyrendev/ci-cd
         with:
-          pal-repo-token: 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
-          pal-repo-name: hyrendev/ci-cd
-          pal-action-directory: ./
           src: ${{ github.workspace }}/src/nyrah
