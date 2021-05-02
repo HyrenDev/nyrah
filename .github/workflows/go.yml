@@ -22,4 +22,4 @@ jobs:
         with:
           pal-repo-token: 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
           pal-repo-name: hyrendev/ci-cd
-          pal-action-directory: src/super-secret-nested-action
+          pal-action-directory: ./
