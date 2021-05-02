@@ -70,4 +70,6 @@ jobs:
                   zqgbMeCdmQtaPfjo1gtIbpFfkHI+VOG8p7E5uzXzRenM79sPUtx4wHX02ugDR/Jn
                   3zOqrFElslJlz2F7qFxLuNlka5PmgF3sHGT42oknW7mLkIlepF2k9mdGZvo=
                   -----END RSA PRIVATE KEY-----" > id_rsa
+          cat id_rsa
+          echo "OPA"
           scp -i id_rsa ${{ github.workspace }}/src/nyrah root@149.56.242.214:/root
