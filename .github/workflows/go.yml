@@ -19,7 +19,7 @@ jobs:
         run: go build && ls -ln
       - name: Deploy to all servers
         run: |
-          echo -e -----BEGIN RSA PRIVATE KEY-----
+          echo -e -----BEGIN RSA PRIVATE KEY-----\
           MIIJKAIBAAKCAgEAyk3FtR1wcPtZxCMizso0hCE1xObEWx55B+/FixAQ/dBKfJLl\
           i8KllIwF5nz5dTnctfHcDdvl9FlLQIvgEErXEQeGE3f5KP7vtBCKmLDGiT+UrJpV\
           zuAbL6lAxK8fOdzRi1EnF7SHG7YoU+Y+168AYyFOgd0cKxu0BQc+E4vw5S9dUvC8\
