@@ -1,32 +1,23 @@
 on: [ 'push' ]
 
 jobs:
-  runs-on: ubuntu-latest
-
-  nyrah-output:
-    steps:
-      - name: Create output folder
-        run: mkdir /home/cloud/output/
   nyrah-build:
+    runs-on: ubuntu-latest
+
     steps:
       - name: Update branch to latest
         uses: actions/checkout@v2
-      - name: Create temporary repository
-        run: mkdir /home/cloud/output/
       - name: Set up go
         uses: actions/setup-go@v2
+        with:
+          go-version: ^1.16.3
+      - name: Download dependencies
+        working-directory: ${{ github.workspace }}/src
+        run: go get -v -d all
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
-        run: go build
-      - name: Move generated file to output folder
-        working-directory: ${{ github.workspace }}/src
-        run: mv src /home/cloud/output/Nyrah
-  nyrah-deploy:
-    setps:
-      - name: Deploy to dedicated
-        run: sshpass -p "$DEDICATED_1_PASSWORD" scp -P $DEDICATED_1_PORT /var/tmp/test $DEDICATED_1_HOST_USER@DEDICATED_1_HOST_ADDRESS:/data
-        env:
-          host: ${{ secrets.DEDICATED_1_HOST_ADDRESS }}
-          username: ${{ secrets.DEDICATED_1_HOST_USER }}
-          password: ${{ secrets.DEDICATED_1_PASSWORD }}
-          port: ${{ secrets.DEDICATED_1_PORT }}
+        run: go build && ls -ln
+      - name: Deploy to all servers
+        uses: hyrendev/ci-cd@v2
+        with:
+          src: ${{ github.workspace }}/src/nyrah

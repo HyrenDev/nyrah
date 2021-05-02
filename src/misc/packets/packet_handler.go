@@ -3,19 +3,19 @@ package packets
 import (
 	"errors"
 	"fmt"
-	"gominet/chat"
-	"gominet/protocol"
-	"gominet/protocol/codecs"
-	"gominet/protocol/packet"
 	"log"
+	"net/hyren/nyrah/minecraft/chat"
+	"net/hyren/nyrah/minecraft/protocol"
+	"net/hyren/nyrah/minecraft/protocol/codecs"
+	"net/hyren/nyrah/minecraft/protocol/packet"
 	"reflect"
 	"strings"
 
-	ProxyApp "../../applications"
-	Databases "../../databases"
-	Connection "../connection"
-	NyrahConstants "../constants"
-	Config "../utils"
+	Connection "net/hyren/nyrah/misc/connection"
+	Constants "net/hyren/nyrah/misc/constants"
+	Config "net/hyren/nyrah/misc/utils"
+	ProxyApp "net/hyren/nyrah/applications"
+	Databases "net/hyren/nyrah/databases"
 )
 
 func HandlePackets(connection *protocol.Connection, holder packet.Holder) error {
@@ -30,6 +30,8 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 
 			connection.Protocol = uint16(handshake.ProtocolVersion)
 			connection.State = protocol.State(uint8(handshake.NextState))
+
+			println(handshake.ServerAddress)
 
 			handshake.NextState = 2
 			handshake.ServerAddress = codecs.String(
@@ -90,13 +92,9 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			loginStart, ok := holder.(packet.LoginStart)
 
 			if ok {
-				loginSuccess, _ := holder.(packet.LoginSuccess)
-
-				log.Println(loginSuccess.UUID)
-
 				name := string(loginStart.Username)
 
-				log.Println("Conexão recebida de", name)
+				log.Println("Conexão recebida de [", name, "/", "]")
 
 				if Config.IsMaintenanceModeEnabled() == true && !canJoin(
 					name,
@@ -172,7 +170,7 @@ func disconnectBecauseNotHaveProxyToSend(connection *protocol.Connection) {
 	connection.Disconnect(chat.TextComponent{
 		Text: fmt.Sprintf(
 			"%s\n\n§r§cNão foi possível localizar um proxy para enviar você.",
-			NyrahConstants.SERVER_PREFIX,
+			Constants.SERVER_PREFIX,
 		),
 	})
 }
@@ -181,7 +179,7 @@ func disconnectBecauseMaintenanceModeIsEnabled(connection *protocol.Connection) 
 	connection.Disconnect(chat.TextComponent{
 		Text: fmt.Sprintf(
 			"%s\n\n§r§cO servidor atualmente encontra-se em manutenção.",
-			NyrahConstants.SERVER_PREFIX,
+			Constants.SERVER_PREFIX,
 		),
 	})
 }

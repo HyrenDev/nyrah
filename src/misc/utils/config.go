@@ -1,17 +1,18 @@
 package utils
 
 import (
-	Databases "../../databases"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"github.com/patrickmn/go-cache"
-	"gominet/chat"
 	"io/ioutil"
 	"log"
+	"net/hyren/nyrah/minecraft/chat"
 	"os"
 	"time"
+
+	Databases "net/hyren/nyrah/databases"
 )
 
 var (

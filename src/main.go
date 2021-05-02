@@ -1,10 +1,10 @@
 package main
 
 import (
-	"log"
+	Proxy "net/hyren/nyrah/misc/proxy"
+	Config "net/hyren/nyrah/misc/utils"
 
-	Proxy "./misc/proxy"
-	Config "./misc/utils"
+	"log"
 )
 
 func main() {

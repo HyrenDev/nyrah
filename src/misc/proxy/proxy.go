@@ -1,14 +1,14 @@
 package proxy
 
 import (
-	"gominet"
 	"log"
+	"net/hyren/nyrah/minecraft"
 
-	PacketHandler "../packets"
+	PacketHandler "net/hyren/nyrah/misc/packets"
 )
 
 func CreateServer(address string, port int) {
-	server := gominet.NewServer(address, port, PacketHandler.HandlePackets)
+	server := minecraft.NewServer(address, port, PacketHandler.HandlePackets)
 
 	if server == nil {
 		log.Println("Failed to create minecraft server")

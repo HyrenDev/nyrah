@@ -1,10 +1,11 @@
 package applications
 
 import (
-	Databases "../databases"
-	"./status"
 	"fmt"
 	"log"
+	"net/hyren/nyrah/applications/status"
+
+	Databases "net/hyren/nyrah/databases"
 )
 
 func GetProxyAddress(key string) string {

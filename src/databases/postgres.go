@@ -7,7 +7,7 @@ import (
 	"database/sql"
 	_ "github.com/lib/pq"
 
-	Env "../environment"
+	Env "net/hyren/nyrah/environment"
 )
 
 func StartPostgres() *sql.DB {

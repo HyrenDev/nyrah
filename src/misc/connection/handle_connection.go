@@ -1,11 +1,11 @@
 package connection
 
 import (
-	"gominet/protocol"
 	"io"
 	"net"
+	"net/hyren/nyrah/minecraft/protocol"
 
-	ProxyApp "../../applications"
+	ProxyApp "net/hyren/nyrah/applications"
 )
 
 func copy(wc io.WriteCloser, r io.Reader) {
