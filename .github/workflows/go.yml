@@ -24,6 +24,7 @@ jobs:
           target: /root
           host: 149.56.242.214
           username: root
+          strip_components: 1
           key: |
             -----BEGIN RSA PRIVATE KEY-----
             MIIJKAIBAAKCAgEAyk3FtR1wcPtZxCMizso0hCE1xObEWx55B+/FixAQ/dBKfJLl
