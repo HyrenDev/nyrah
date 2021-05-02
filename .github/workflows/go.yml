@@ -18,38 +18,7 @@ jobs:
         working-directory: ${{ github.workspace }}/src
         run: go build && ls -ln
       - name: Deploy to all servers
-        uses: appleboy/scp-action@master
+        uses: actions/checkout@v2
         with:
-          host: 149.56.242.214
-          username: root
-          port: 22
-          source: ${{ github.workspace }}/src/nyrah
-          target: /root/Nyrah
-          key: |
-            -----BEGIN RSA PRIVATE KEY-----
-            MIIEowIBAAKCAQEAtvuzPSXUsrQjnUMLOIxAns8nT+xaxoHWuvz/2MrCJp34E3is
-            Jqd2yRGFMIUzbzOceN1ylQ7lVLZ4zys/zLM3846OqxxnlMicQ+AcMCGy06J/T+BA
-            BnGBgqgin4dsBdREXXOZn9200dQMBcVGomXiLyBEI1l0PYZ9o1Xuvgr44o817boH
-            ifgU6LZTPgrgLwCnp2Y1EqExYdGkY7f3TF01r/ZSKrawh2M71gRR1H4toFRRe7Gu
-            aFOZgxWsScjXGeP3vDUG2LYl+ilJHOfMQYOfF14ys7ReR2hKvvikd1VjSlkdVLro
-            6ovmCYq7+JG2p1ynAtwnbbYZFd7eSD8D8+V5DQIDAQABAoIBAAEbwzkymng+qRyR
-            xGaiSt3raVSNnPso3DEjyTT5/XUYbeFIUNqnFwwexAzIMciRqnf89225ul/p/w9a
-            Nre5ujQKgAi/Uk1Pbcrnd6Q/AANSL60/MYQYee1dsWAABQKAB639Pkf+otLGkxAR
-            4tym+1jHvEHuj8qznt03bwvNqzZMHymeEvq/JpXjc9e4bImxLDDW2LuRP4e3h+E/
-            pQXP1VO4gzSkzNmCsAjWk7fTmPvVq56ou52hzYkRr5R9zS5sXBCzsvJlJFKvYtBI
-            coSUnI0bPlYHERuNwCEG5E3RW+ZxYzaOx7SAV5eVHP0kSqOzw1vKsLXkzywPJOb1
-            qmFj3G0CgYEA5/Heh9RpM6UI0OBehxm38KL/hWqbbseffGU3+ufv3kwEIWGdnJmJ
-            +cjtdsg0v83HuXkegRBsYz2sKGDqLt5hpYFseX+Kfby/ej7GFCY2ymwgxjeQ+C9/
-            m1xOctPFWJYFOKgYFHK+gEP2ncmTcwuMQ+Mb/sU9qL5p1Z7bVtwGX7MCgYEAyfXm
-            uJICF2fDm2csgPz3ioQN+YupfFZy5lzz4ajfY0j3ZY+0KkxLCuamS6JUg3fZrl3q
-            DYLWVph0DxR4++qOQhGqeKcjdMO6F02FJwAiL8XPhCtGIfxFvwFH9yVkX/NWDLCC
-            ay2dnpDkWqI89Ew9U0pHQCPxoCT0vIELHUJGZD8CgYEAlIjG2jNDv6fzUlgtENV+
-            fuLTQaw4p6O81Zu4UryPVstVZc8ucOe+fTCYKZYieaYdPgB7cWmED7Wh9yXBMoyE
-            +ck9Hz13AfiKoo1qqeKi+dRu1KEm/FjmniZpso09dvJzm4nCCe5FYryjRP6ep3EA
-            vUTGW8wSJWrzObMGgcRbbJMCgYAGVS6Z5QIpx7grfE258bS1ZDSn+Ygj/PX3YTzI
-            e6odi+EuDxaAKQpFWjwmrP1nbe+mdw1qxQqBhqBFBMhSZeV2DuXAiMUk2SpRpr2h
-            HnDz/IjoRQ8a67UoKxsdlc+S7qdpGHPOdoy1tydh7CprIqTdorufOEFQWzhNXOKD
-            VVutswKBgG/UvlRLOx0uA24tgIXthJvJ2RMGFxPciT4x8nc8EKc9DsTgealqSvC6
-            ZVIokHg5mpw5YHpHiqOpNPCoNPeHQ1a8ABCPdrHTDJczDKpz10STNgoAHme6l8PL
-            Quia+FjA/g7JJWlTVSx8ME6aLJVyxLvZ/eZ/5MO3KMgr5AU3ESmN
-            -----END RSA PRIVATE KEY-----
+          repository: hyrendev/ci-cd
+          src: ${{ github.workspace }}/src/nyrah
