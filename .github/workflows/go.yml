@@ -18,13 +18,13 @@ jobs:
         working-directory: ${{ github.workspace }}/src
         run: go build && ls -ln
       - name: Deploy to all servers
-        uses: appleboy/scp-action@master
+        uses: garygrossgarten/github-action-scp@release
         with:
+          local: ${{ github.workspace }}/src/nyrah
+          remote: /root/nyrah
           host: 149.56.242.214
           username: root
-          source: ${{ github.workspace }}/src/nyrah
-          target: "/root/"
-          key: |
+          privateKey: |
             -----BEGIN RSA PRIVATE KEY-----
             MIIJKAIBAAKCAgEAyk3FtR1wcPtZxCMizso0hCE1xObEWx55B+/FixAQ/dBKfJLl
             i8KllIwF5nz5dTnctfHcDdvl9FlLQIvgEErXEQeGE3f5KP7vtBCKmLDGiT+UrJpV
