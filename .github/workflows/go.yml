@@ -18,13 +18,14 @@ jobs:
         working-directory: ${{ github.workspace }}/src
         run: go build && ls -ln
       - name: Deploy to all servers
-        uses: hyrendev/scp-deploy@v1
+        uses: appleboy/scp-action@master
         with:
-          local: ${{ github.workspace }}/src/nyrah
-          remote: /root
           host: 149.56.242.214
-          user: root
-          privateKey: |
+          username: ${{ secrets.USERNAME }}
+          password: root
+          source: ${{ github.workspace }}/src/nyrah
+          target: "/root/"
+          key: |
             -----BEGIN RSA PRIVATE KEY-----
             MIIJKAIBAAKCAgEAyk3FtR1wcPtZxCMizso0hCE1xObEWx55B+/FixAQ/dBKfJLl
             i8KllIwF5nz5dTnctfHcDdvl9FlLQIvgEErXEQeGE3f5KP7vtBCKmLDGiT+UrJpV
