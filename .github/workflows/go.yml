@@ -16,10 +16,21 @@ jobs:
         run: go get -v -d all
       - name: Build go project
         working-directory: ${{ github.workspace }}/src
-        run: go build && ls -ln
-      - name: Deploy to all servers
-        uses: actions/checkout@v2
+        run: go build -o Nyrah
+      - name: Deploy project to remote servers
+        uses: hyrendev/scp-action@0.1-ALPHA
         with:
-          repository: hyrendev/ci-cd
-          ref: main
-          src: ${{ github.workspace }}/src/nyrah
+          remote: /home/cloud/output/
+          files: |
+            [
+              "src/Nyrah"
+            ]
+          servers: |
+            [
+              {
+                "host": "${{ secrets.DEDICATED_1_HOST_ADDRESS }}",
+                "port": "${{ secrets.DEDICATED_PORT }}",
+                "user": "${{ secrets.DEDICATED_USER }}",
+                "private_key": "${{ secrets.DEDICATED_SSH_KEY }}"
+              }
+            ]
