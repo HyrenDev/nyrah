@@ -2,7 +2,6 @@ package utils
 
 import (
 	"encoding/base64"
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
@@ -11,6 +10,7 @@ import (
 	"log"
 	"net/hyren/nyrah/minecraft/chat"
 	"os"
+	"strconv"
 	"time"
 
 	Databases "net/hyren/nyrah/databases"
@@ -155,9 +155,15 @@ func GetMaxPlayers() int {
 		defer db.Close()
 	}
 
-	_, max_players_value := binary.Uvarint(max_players.([]byte))
+	fmt.Printf("Interface: %s", max_players)
 
-	fmt.Println(max_players_value)
+	data := string(max_players.([]byte))
+
+	fmt.Printf("Data: %s", data)
+
+	max_players_value, _ := strconv.Atoi(data)
+
+	fmt.Printf("Value: %d", max_players_value)
 
 	return max_players_value
 }
