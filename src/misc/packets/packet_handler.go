@@ -35,10 +35,11 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			handshake.ServerAddress = codecs.String(
 				string(
 					handshake.ServerAddress,
-				) + "%ABC%" + strings.Split(connection.Handle.LocalAddr().String(), ":")[0],
+				) + "%ABC%" + strings.Split(connection.Handle.RemoteAddr().String(), ":")[0],
 			)
 
-			println(handshake.ServerAddress)
+			fmt.Printf("Remote addr: %s", connection.Handle.RemoteAddr().String())
+			fmt.Println(handshake.ServerAddress)
 
 			connection.PacketQueue[0] = handshake
 
