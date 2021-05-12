@@ -77,15 +77,15 @@ func GetMOTD() chat.TextComponent {
 func IsMaintenanceModeEnabled() bool {
 	db := Databases.StartMariaDB()
 
-	current_state, found := CACHE.Get("maintenance")
+	isMaintenanceModeEnabled, found := CACHE.Get("maintenance")
 
 	if !found {
 		row, err := db.Query("SELECT `current_state` FROM `maintenance` WHERE `application_name`='nyrah';")
 
 		if err == nil && row.Next() {
-			_ = row.Scan(&current_state)
+			_ = row.Scan(&isMaintenanceModeEnabled)
 
-			CACHE.Set("maintenance", current_state, 1*time.Second)
+			CACHE.Set("maintenance", isMaintenanceModeEnabled, 1*time.Second)
 
 			defer row.Close()
 		}
@@ -93,7 +93,9 @@ func IsMaintenanceModeEnabled() bool {
 
 	defer db.Close()
 
-	return current_state.(bool)
+	isMaintenanceModeEnabledState, _ := strconv.ParseBool(string(isMaintenanceModeEnabled.([]byte)))
+
+	return isMaintenanceModeEnabledState
 }
 
 func IsGroupWhitelisted(group_name string) bool {
@@ -134,7 +136,7 @@ func GetOnlinePlayers() int {
 }
 
 func GetMaxPlayers() int {
-	max_players, found := CACHE.Get("max_players")
+	maxPlayers, found := CACHE.Get("max_players")
 
 	if !found {
 		db := Databases.StartMariaDB()
@@ -146,26 +148,18 @@ func GetMaxPlayers() int {
 		}
 
 		if row.Next() {
-			_ = row.Scan(&max_players)
+			_ = row.Scan(&maxPlayers)
 		}
 
-		CACHE.Set("max_players", max_players, 3*time.Second)
+		CACHE.Set("max_players", maxPlayers, 3*time.Second)
 
 		defer row.Close()
 		defer db.Close()
 	}
 
-	fmt.Printf("Interface: %s", max_players)
+	maxPlayersValue, _ := strconv.Atoi(string(maxPlayers.([]byte)))
 
-	data := string(max_players.([]byte))
-
-	fmt.Printf("Data: %s", data)
-
-	max_players_value, _ := strconv.Atoi(data)
-
-	fmt.Printf("Value: %d", max_players_value)
-
-	return max_players_value
+	return maxPlayersValue
 }
 
 func GetFavicon() (string, error) {
