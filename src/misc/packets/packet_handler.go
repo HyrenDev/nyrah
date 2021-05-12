@@ -34,7 +34,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			handshake.NextState = 2
 			handshake.ServerAddress = codecs.String(strings.Split(connection.Handle.RemoteAddr().String(), ":")[0])
 
-			fmt.Println("Received connection from", handshake.ServerAddress)
+			fmt.Println("Received ping request from:", handshake.ServerAddress)
 
 			connection.PacketQueue[0] = handshake
 
@@ -90,7 +90,11 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			if ok {
 				name := string(loginStart.Username)
 
-				log.Printf("Conexão recebida de [%s]", name)
+				fmt.Println(fmt.Sprintf(
+					"Conexão recebida de [%s/%s]",
+					name,
+					connection.GetRemoteAddr(),
+				))
 
 				if Config.IsMaintenanceModeEnabled() == true && !canJoin(
 					name,

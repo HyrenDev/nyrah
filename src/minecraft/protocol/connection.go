@@ -163,3 +163,7 @@ func (c *Connection) encode(h packet.Holder) (*bytes.Buffer, error) {
 
 	return buffer, nil
 }
+
+func (conn *Connection) GetRemoteAddr() string {
+	return conn.Handle.RemoteAddr().String()
+}
