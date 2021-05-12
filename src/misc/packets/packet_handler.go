@@ -11,11 +11,11 @@ import (
 	"reflect"
 	"strings"
 
+	ProxyApp "net/hyren/nyrah/applications"
+	Databases "net/hyren/nyrah/databases"
 	Connection "net/hyren/nyrah/misc/connection"
 	Constants "net/hyren/nyrah/misc/constants"
 	Config "net/hyren/nyrah/misc/utils"
-	ProxyApp "net/hyren/nyrah/applications"
-	Databases "net/hyren/nyrah/databases"
 )
 
 func HandlePackets(connection *protocol.Connection, holder packet.Holder) error {
@@ -105,9 +105,9 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 					return nil
 				}
 
-				db := Databases.StartPostgres()
+				db := Databases.StartMariaDB()
 
-				rows, err := db.Query("SELECT \"name\" FROM \"applications\" WHERE \"application_type\"='PROXY';")
+				rows, err := db.Query("SELECT `name` FROM `applications` WHERE `application_type`='PROXY';")
 
 				defer db.Close()
 
@@ -185,11 +185,11 @@ func disconnectBecauseMaintenanceModeIsEnabled(connection *protocol.Connection) 
 }
 
 func canJoin(name string) bool {
-	db := Databases.StartPostgres()
+	db := Databases.StartMariaDB()
 
 	rows, err := db.Query(
 		fmt.Sprintf(
-			"SELECT \"id\" FROM \"users\" WHERE \"name\" ILIKE '%s';",
+			"SELECT `id` FROM `users` WHERE `name` LIKE '%s';",
 			name,
 		),
 	)
@@ -214,11 +214,11 @@ func canJoin(name string) bool {
 
 	defer rows.Close()
 
-	db = Databases.StartPostgres()
+	db = Databases.StartMariaDB()
 
 	rows, err = db.Query(
 		fmt.Sprintf(
-			"SELECT \"group_name\" FROM \"users_groups_due\" WHERE \"user_id\"='%s';",
+			"SELECT `group_name` FROM `users_groups_due` WHERE `user_id`='%s';",
 			id,
 		),
 	)

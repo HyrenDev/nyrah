@@ -29,14 +29,14 @@ var (
 )
 
 func GetMOTD() chat.TextComponent {
-	db := Databases.StartPostgres()
+	db := Databases.StartMariaDB()
 
 	var maintenance = IsMaintenanceModeEnabled()
 
 	motd, found := CACHE.Get("motd")
 
 	if !found {
-		row, err := db.Query("SELECT \"first_line\", \"second_line\" FROM \"motd\" LIMIT 1")
+		row, err := db.Query("SELECT `first_line`, `second_line` FROM `motd` LIMIT 1")
 
 		if err == nil && row.Next() {
 			var first_line string
@@ -74,12 +74,12 @@ func GetMOTD() chat.TextComponent {
 }
 
 func IsMaintenanceModeEnabled() bool {
-	db := Databases.StartPostgres()
+	db := Databases.StartMariaDB()
 
 	current_state, found := CACHE.Get("maintenance")
 
 	if !found {
-		row, err := db.Query("SELECT \"current_state\" FROM \"maintenance\" WHERE \"application_name\"='nyrah';")
+		row, err := db.Query("SELECT `current_state` FROM `maintenance` WHERE `application_name`='nyrah';")
 
 		if err == nil && row.Next() {
 			_ = row.Scan(&current_state)
@@ -136,9 +136,9 @@ func GetMaxPlayers() int {
 	max_players, found := CACHE.Get("max_players")
 
 	if !found {
-		db := Databases.StartPostgres()
+		db := Databases.StartMariaDB()
 
-		row, err := db.Query("SELECT \"slots\" FROM \"applications\" WHERE \"name\"='nyrah';")
+		row, err := db.Query("SELECT `slots` FROM `applications` WHERE `name`='nyrah';")
 
 		if err != nil {
 			return 0

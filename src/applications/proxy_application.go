@@ -9,9 +9,12 @@ import (
 )
 
 func GetProxyAddress(key string) string {
-	db := Databases.StartPostgres()
+	db := Databases.StartMariaDB()
 
-	row, err := db.Query("SELECT \"address\", \"port\" FROM \"applications\" WHERE \"name\"='" + key + "'")
+	row, err := db.Query(fmt.Sprintf(
+		"SELECT `address`, `port` FROM `applications` WHERE `name`='%s'",
+		key,
+	))
 
 	defer db.Close()
 
