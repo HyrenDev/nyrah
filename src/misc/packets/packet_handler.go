@@ -34,7 +34,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			handshake.NextState = 2
 			handshake.ServerAddress = codecs.String(strings.Split(connection.Handle.RemoteAddr().String(), ":")[0])
 
-			fmt.Printf("Received connection from %s", handshake.ServerAddress)
+			fmt.Println("Received connection from", handshake.ServerAddress)
 
 			connection.PacketQueue[0] = handshake
 
