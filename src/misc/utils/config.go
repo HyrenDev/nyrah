@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/base64"
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
@@ -154,11 +155,11 @@ func GetMaxPlayers() int {
 		defer db.Close()
 	}
 
-	a := max_players.([]uint8)
+	_, max_players_value := binary.Uvarint(max_players.([]byte))
 
-	fmt.Println(a)
+	fmt.Println(max_players_value)
 
-	return int(max_players.([]uint8)[0])
+	return max_players_value
 }
 
 func GetFavicon() (string, error) {
