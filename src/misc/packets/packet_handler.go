@@ -31,14 +31,14 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			connection.Protocol = uint16(handshake.ProtocolVersion)
 			connection.State = protocol.State(uint8(handshake.NextState))
 
-			println(handshake.ServerAddress)
-
 			handshake.NextState = 2
 			handshake.ServerAddress = codecs.String(
 				string(
 					handshake.ServerAddress,
-				) + "%ABC%" + strings.Split(connection.Handle.RemoteAddr().String(), ":")[0],
+				) + "%ABC%" + strings.Split(connection.Handle.LocalAddr().String(), ":")[0],
 			)
+
+			println(handshake.ServerAddress)
 
 			connection.PacketQueue[0] = handshake
 
@@ -94,7 +94,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			if ok {
 				name := string(loginStart.Username)
 
-				log.Println("Conexão recebida de [", name, "/", "]")
+				log.Printf("Conexão recebida de [%s]", name)
 
 				if Config.IsMaintenanceModeEnabled() == true && !canJoin(
 					name,
