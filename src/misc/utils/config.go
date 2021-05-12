@@ -154,7 +154,9 @@ func GetMaxPlayers() int {
 		defer db.Close()
 	}
 
-	fmt.Println(max_players)
+	a := max_players.([]uint8)
+
+	fmt.Println(a)
 
 	return int(max_players.([]uint8)[0])
 }
