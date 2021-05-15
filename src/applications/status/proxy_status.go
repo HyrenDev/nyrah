@@ -107,7 +107,7 @@ func GetApplicationAddress(application string) (string, error) {
 	return fmt.Sprintf(
 		"%s:%d",
 		address["address"].(string),
-		address["port"].(int),
+		int(address["port"].(float64)),
 	), nil
 }
 
