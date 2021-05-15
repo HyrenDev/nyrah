@@ -78,7 +78,7 @@ func GetApplicationOnlinePlayers(application string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	return int(data["onlinePlayers"].(float64)), nil
+	return int(data["online_players"].(float64)), nil
 }
 
 func GetApplicationAddress(application string) (string, error) {
