@@ -102,7 +102,13 @@ func GetApplicationAddress(application string) (string, error) {
 		return "", err
 	}
 
-	return data["address"].(string), nil
+	address := data["address"].(map[string]interface{})
+
+	return fmt.Sprintf(
+		"%s:%d",
+		address["address"].(string),
+		address["port"].(int),
+	), nil
 }
 
 func IsProxyOnline(server string) bool {
