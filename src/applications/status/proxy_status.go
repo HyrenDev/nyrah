@@ -102,11 +102,11 @@ func GetApplicationAddress(application string) (string, error) {
 		return "", err
 	}
 
-	address := data["address"].(map[string]interface{})
+	address := data["inet_socket_address"].(map[string]interface{})
 
 	return fmt.Sprintf(
 		"%s:%d",
-		address["address"].(string),
+		address["host"].(string),
 		int(address["port"].(float64)),
 	), nil
 }

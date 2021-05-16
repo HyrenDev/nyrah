@@ -32,7 +32,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			connection.State = protocol.State(uint8(handshake.NextState))
 
 			handshake.NextState = 2
-			handshake.ServerAddress = codecs.String(strings.Split(connection.Handle.RemoteAddr().String(), ":")[0])
+			handshake.ServerAddress = codecs.String(string(handshake.ServerAddress) + "%ABC%" + strings.Split(connection.Handle.RemoteAddr().String(), ":")[0])
 
 			fmt.Println("Received ping request from:", handshake.ServerAddress)
 
@@ -233,11 +233,11 @@ func canJoin(name string) bool {
 	}
 
 	for next := rows.Next(); next; next = rows.Next() {
-		var group_name string
+		var groupName string
 
-		rows.Scan(&group_name)
+		rows.Scan(&groupName)
 
-		if Config.IsGroupWhitelisted(group_name) {
+		if Config.IsGroupWhitelisted(groupName) {
 			return true
 		}
 	}

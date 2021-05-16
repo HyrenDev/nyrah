@@ -184,13 +184,13 @@ func GetFavicon() (string, error) {
 func GetServerAddress() string {
 	var settings = ReadSettingsFile()
 
-	return settings["address"].(map[string]interface{})["host"].(string)
+	return settings["inet_socket_address"].(map[string]interface{})["host"].(string)
 }
 
 func GetServerPort() int {
 	var settings = ReadSettingsFile()
 
-	return int(settings["address"].(map[string]interface{})["port"].(float64))
+	return int(settings["inet_socket_address"].(map[string]interface{})["port"].(float64))
 }
 
 func ReadSettingsFile() map[string]interface{} {
