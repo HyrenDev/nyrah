@@ -1,6 +1,7 @@
 package applications
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/hyren/nyrah/applications/status"
@@ -36,6 +37,10 @@ func GetProxyAddress(key string) string {
 
 func GetRandomProxy(proxies []string) (string, error) {
 	proxyApplicationName, err := status.GetBalancedProxyApplicationName(proxies)
+
+	if proxyApplicationName == "" {
+		return "", errors.New("Cannot find an proxy to send the player")
+	}
 
 	fmt.Println("Getting status from", proxyApplicationName)
 
