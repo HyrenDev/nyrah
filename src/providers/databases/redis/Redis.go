@@ -22,15 +22,11 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 	var port = int(main["port"].(float64))
 	var password = main["password"].(string)
 
-	fmt.Println("Connect to", host, ":", port, " with", password)
-
-	redisServer := fmt.Sprintf("%s:%d", host, port)
-
-	redisDatabaseProvider.pool = &redis.Pool{
+	redisDatabaseProvider.pool = &redis.Pool {
 		MaxIdle:     3,
 		IdleTimeout: 240 * time.Second,
 		Dial: func() (redis.Conn, error) {
-			connection, err := redis.Dial("tcp", redisServer)
+			connection, err := redis.Dial("tcp", fmt.Sprintf("%s:%d", host, port))
 
 			if err != nil || connection == nil {
 				return connection, err
@@ -50,14 +46,14 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 
 			return connection, err
 		},
-		TestOnBorrow: func(c redis.Conn, t time.Time) error {
-			_, err := c.Do("PING")
+		TestOnBorrow: func(connection redis.Conn, time time.Time) error {
+			_, err := connection.Do("PING")
 
 			return err
 		},
 	}
 }
 
-func (redisDatabaseProvider RedisDatabaseProvider) Provide() redis.Conn {
-	return redisDatabaseProvider.pool.Get()
+func (redisDatabaseProvider RedisDatabaseProvider) Provide() *redis.Pool {
+	return redisDatabaseProvider.pool
 }

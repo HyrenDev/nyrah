@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	ProxyApplication "net/hyren/nyrah/applications"
+	ProxyStatus "net/hyren/nyrah/applications/status/proxy"
 	ProxyConnector "net/hyren/nyrah/misc/connector"
 	Config "net/hyren/nyrah/misc/utils"
 	User "net/hyren/nyrah/users"
@@ -41,7 +42,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 		{
 			_, ok := holder.(packet.StatusRequest)
 
-			var online = Config.GetOnlinePlayers()
+			var online = ProxyStatus.GetOnlinePlayers()
 			var maxPlayers = Config.GetMaxPlayers()
 
 			if ok {

@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/gomodule/redigo/redis"
 	"io/ioutil"
 	"net/hyren/nyrah/cache/local"
 	"net/hyren/nyrah/minecraft/chat"
@@ -82,31 +81,6 @@ func IsMaintenanceModeEnabled() bool {
 	}
 
 	return isMaintenanceModeEnabled.(bool)
-}
-
-func GetOnlinePlayers() int {
-	var onlinePlayers int
-
-	cursor := 0
-
-	for ok := true; ok; ok = cursor != 0 {
-		result, err := redis.Values(
-			NyrahProvider.REDIS_MAIN.Provide().Do("SCAN", cursor, "MATCH", "users:*"),
-		)
-
-		if err != nil {
-			fmt.Println(err)
-
-			return 0
-		}
-
-		cursor, _ = redis.Int(result[0], nil)
-		keys, _ := redis.Strings(result[1], nil)
-
-		onlinePlayers += len(keys)
-	}
-
-	return onlinePlayers
 }
 
 func GetMaxPlayers() int {
