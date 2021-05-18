@@ -94,7 +94,7 @@ func IsMaintenanceModeEnabled() bool {
 func GetMaxPlayers() int {
 	var settings = readSettingsFile()
 
-	return settings["max_players"].(int)
+	return int(settings["max_players"].(float64))
 }
 
 func GetFavicon() (string, error) {
