@@ -23,14 +23,14 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 	var port = int(main["port"].(float64))
 	var password = main["password"].(string)
 
+	log.Printf("Connecting to redis database (%s:%d)...\n", host, port)
+
 	pool = &redis.Pool {
 		Wait:        true,
 		MaxIdle:     3,
 		MaxActive:   8,
 		IdleTimeout: 2000,
 		Dial: func() (redis.Conn, error) {
-			log.Printf("Connecting to redis database (%s:%d)...\n", host, port)
-
 			c, err := redis.Dial("tcp", fmt.Sprintf("%s:%d", host, port))
 
 			if err != nil {
@@ -53,6 +53,8 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 			return err
 		},
 	}
+
+	log.Println("Redis connection established successfully!")
 }
 
 func (redisDatabaseProvider RedisDatabaseProvider) Provide() *redis.Pool {

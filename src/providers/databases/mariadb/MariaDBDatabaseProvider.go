@@ -17,8 +17,6 @@ type MariaDBDatabaseProvider struct {
 }
 
 func (databaseProvider MariaDBDatabaseProvider) Prepare() {
-	log.Println("Preparing mysql connection...")
-
 	var postgres = environment.Get("databases").(map[string]interface{})["maria_db"].(map[string]interface{})
 
 	var host = postgres["host"].(string)
@@ -26,6 +24,8 @@ func (databaseProvider MariaDBDatabaseProvider) Prepare() {
 	var user = postgres["user"].(string)
 	var password = postgres["password"].(string)
 	var database = postgres["database"].(string)
+
+	log.Printf("Connecting to MySQL database (%s:%d)...\n", host, port)
 
 	db, err := sql.Open("mysql", fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s",
@@ -42,7 +42,7 @@ func (databaseProvider MariaDBDatabaseProvider) Prepare() {
 		panic(err)
 	}
 
-	log.Println("Connection established successfully!")
+	log.Println("MySQL connection established successfully!")
 
 	pool <- db
 }
