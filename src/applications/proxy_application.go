@@ -30,7 +30,7 @@ func (inetSocketAddress InetSocketAddress) GetPort() int {
 }
 
 func GetProxyAddress(key string) InetSocketAddress {
-	inetSocketAddress, found := CACHE.Get(fmt.Sprintf("%s_address", key))
+	inetSocketAddress, found := CACHE.Get(fmt.Sprintf("%s_inet_socket_address", key))
 
 	if !found {
 		fmt.Println("Fetching ip address from", key, "in database...")
