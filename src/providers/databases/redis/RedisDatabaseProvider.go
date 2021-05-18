@@ -70,8 +70,6 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 	}
 }
 
-func (redisDatabaseProvider RedisDatabaseProvider) Provide() redis.Conn {
-	redisConnection := redisDatabaseProvider.pool.Get()
-
-	return redisConnection
+func (redisDatabaseProvider RedisDatabaseProvider) Provide() *redis.Pool {
+	return redisDatabaseProvider.pool
 }

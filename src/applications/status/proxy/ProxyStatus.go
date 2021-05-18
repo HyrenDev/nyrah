@@ -12,9 +12,13 @@ import (
 )
 
 func GetApplicationOnlinePlayers(application string) (int, error) {
+	redisConnection := NyrahProvider.REDIS_MAIN.Provide().Get()
+
 	var bytes, err = redis.Bytes(
-		NyrahProvider.REDIS_MAIN.Provide().Do("GET", fmt.Sprintf("applications:%s", application)),
+		redisConnection.Do("GET", fmt.Sprintf("applications:%s", application)),
 	)
+
+	defer redisConnection.Close()
 
 	if err != nil {
 		return 0, err
@@ -31,9 +35,13 @@ func GetApplicationOnlinePlayers(application string) (int, error) {
 }
 
 func GetApplicationAddress(application string) (string, error) {
+	redisConnection := NyrahProvider.REDIS_MAIN.Provide().Get()
+
 	var bytes, err = redis.Bytes(
-		NyrahProvider.REDIS_MAIN.Provide().Do("GET", fmt.Sprintf("applications:%s", application)),
+		redisConnection.Do("GET", fmt.Sprintf("applications:%s", application)),
 	)
+
+	defer redisConnection.Close()
 
 	if err != nil {
 		return "", err
@@ -70,12 +78,16 @@ func GetOnlinePlayers() int {
 	onlinePlayers, found := local.CACHE.Get("online_players")
 
 	if !found {
+		redisConnection := NyrahProvider.REDIS_MAIN.Provide().Get()
+
 		cursor := 0
 
 		for ok := true; ok; ok = cursor != 0 {
 			result, err := redis.Values(
-				NyrahProvider.REDIS_MAIN.Provide().Do("SCAN", cursor, "MATCH", "users:*"),
+				redisConnection.Do("SCAN", cursor, "MATCH", "users:*"),
 			)
+
+			defer redisConnection.Close()
 
 			if err != nil {
 				fmt.Println(err)
