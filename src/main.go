@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
-	"net/hyren/nyrah/misc/providers"
+	"net/hyren/nyrah/minecraft"
 	"os"
 
-	Proxy "net/hyren/nyrah/applications/implementations"
+	PacketHandler "net/hyren/nyrah/misc/packets"
+	NyrahProviders "net/hyren/nyrah/misc/providers"
 	Config "net/hyren/nyrah/misc/utils"
 )
 
 func main() {
-	err := providers.PreparePrimaryProviders()
+	err := NyrahProviders.PreparePrimaryProviders()
 
 	if err != nil {
 		fmt.Println(err)
@@ -19,8 +20,26 @@ func main() {
 	} else {
 		fmt.Println("Starting proxy server")
 
-		Proxy.CreateServer(
+		server := minecraft.NewServer(Config.GetServerAddress(), Config.GetServerPort(), PacketHandler.HandlePackets)
+
+		if server == nil {
+			fmt.Println("Failed to create minecraft server")
+
+			return
+		}
+
+		err := server.ListenAndServe()
+
+		if err != nil {
+			fmt.Println(err)
+
+			return
+		}
+
+		fmt.Println(
+			"Started minecraft server on",
 			Config.GetServerAddress(),
+			" with port",
 			Config.GetServerPort(),
 		)
 	}

@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"net/hyren/nyrah/applications"
 	"net/hyren/nyrah/minecraft/protocol"
-
-	ProxyApplication "net/hyren/nyrah/applications/implementations"
 )
 
 func ConnectToProxy(connection *protocol.Connection, proxy string) {
-	var inetSocketAddress = ProxyApplication.GetProxyAddress(proxy)
+	var inetSocketAddress = applications.GetProxyAddress(proxy)
 
 	ds, err := net.Dial("tcp", fmt.Sprintf("%s:%d", inetSocketAddress.Host, inetSocketAddress.Port))
 

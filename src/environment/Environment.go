@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/hyren/nyrah/cache/local"
+	"time"
 )
 
 func getEnvironment() map[string]interface{} {
@@ -18,6 +19,8 @@ func getEnvironment() map[string]interface{} {
 		}
 
 		err = json.Unmarshal(bytes, &environment)
+
+		local.CACHE.Set("environment", environment, 5*time.Minute)
 	}
 
 	if environment == nil {
