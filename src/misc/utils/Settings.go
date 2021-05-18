@@ -18,8 +18,6 @@ import (
 func GetMOTD() chat.TextComponent {
 	motd, found := local.CACHE.Get("motd")
 
-	log.Printf("MOTD: %b\n", found)
-
 	if !found {
 		row, err := NyrahProvider.MARIA_DB_MAIN.Provide().Query("SELECT `first_line`, `second_line` FROM `motd` LIMIT 1")
 
@@ -32,8 +30,6 @@ func GetMOTD() chat.TextComponent {
 			var secondLine string
 
 			_ = row.Scan(&firstLine, &secondLine)
-
-			log.Printf("First Line: %s\nSecond Line: %s\n", firstLine, secondLine)
 
 			var maintenance = IsMaintenanceModeEnabled()
 
@@ -60,8 +56,6 @@ func GetMOTD() chat.TextComponent {
 	}
 
 	if motd == nil {
-		local.CACHE.Delete("motd")
-
 		return GetMOTD()
 	}
 
@@ -88,8 +82,6 @@ func IsMaintenanceModeEnabled() bool {
 	}
 
 	if isMaintenanceModeEnabled == nil {
-		local.CACHE.Delete("maintenance")
-
 		return IsMaintenanceModeEnabled()
 	}
 
