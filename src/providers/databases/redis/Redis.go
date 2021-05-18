@@ -16,16 +16,13 @@ type RedisDatabaseProvider struct {
 }
 
 func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
-	var databases = environment.Get("databases").(map[string]interface{})
-
-	fmt.Println("Redis:", databases)
-
-	var main = databases["redis"].(map[string]interface{})["main"].(map[string]interface{})
+	var main = environment.Get("databases").(map[string]interface{})["redis"].(map[string]interface{})["main"].(map[string]interface{})
 
 	var host = main["host"].(string)
 	var port = int(main["port"].(float64))
 	var password = main["password"].(string)
-	var database = 0
+
+	fmt.Println("Connect to", host, ":", port, " with", password)
 
 	redisServer := fmt.Sprintf("%s:%d", host, port)
 
@@ -45,7 +42,7 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 				return nil, err
 			}
 
-			if _, err := connection.Do("SELECT", database); err != nil {
+			if _, err := connection.Do("SELECT", 0); err != nil {
 				_ = connection.Close()
 
 				return nil, err

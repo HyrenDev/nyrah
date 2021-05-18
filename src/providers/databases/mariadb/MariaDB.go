@@ -16,11 +16,7 @@ type MariaDBDatabaseProvider struct {
 }
 
 func (databaseProvider MariaDBDatabaseProvider) Prepare() {
-	var databases = environment.Get("databases").(map[string]interface{})
-
-	fmt.Println("MariaDB:", databases)
-
-	var postgres = databases["maria_db"].(map[string]interface{})
+	var postgres = environment.Get("databases").(map[string]interface{})["maria_db"].(map[string]interface{})
 
 	var host = postgres["host"].(string)
 	var port = int(postgres["port"].(float64))
