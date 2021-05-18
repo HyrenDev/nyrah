@@ -3,6 +3,7 @@ package redis
 import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
+	"log"
 	"net/hyren/nyrah/environment"
 	DatabaseProviders "net/hyren/nyrah/providers/databases"
 	"time"
@@ -21,32 +22,32 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 	var port = int(main["port"].(float64))
 	var password = main["password"].(string)
 
-	redisDatabaseProvider.pool = &redis.Pool {
+	redisDatabaseProvider.pool = &redis.Pool{
 		MaxIdle:     3,
 		IdleTimeout: 240 * time.Second,
 		Dial: func() (redis.Conn, error) {
-			connection, err := redis.Dial("tcp", fmt.Sprintf("%s:%d", host, port))
+			c, err := redis.Dial("tcp", fmt.Sprintf("%s:%d", host, port))
 
 			if err != nil {
-				return nil, err
+				log.Println(nil)
 			}
 
-			if _, err := connection.Do("AUTH", password); err != nil {
-				_ = connection.Close()
-
-				return nil, err
-			}
-
-			if _, err := connection.Do("SELECT", 0); err != nil {
-				_ = connection.Close()
+			if _, err := c.Do("AUTH", password); err != nil {
+				_ = c.Close()
 
 				return nil, err
 			}
 
-			return connection, err
+			if _, err := c.Do("SELECT", 0); err != nil {
+				_ = c.Close()
+
+				return nil, err
+			}
+
+			return c, err
 		},
-		TestOnBorrow: func(connection redis.Conn, time time.Time) error {
-			_, err := connection.Do("PING")
+		TestOnBorrow: func(c redis.Conn, t time.Time) error {
+			_, err := c.Do("PING")
 
 			return err
 		},
