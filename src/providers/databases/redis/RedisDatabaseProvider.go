@@ -17,7 +17,7 @@ type RedisDatabaseProvider struct {
 }
 
 func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
-	var main = environment.Get("databases").(map[string]interface{})["redis"].(map[string]interface{})["main"].(map[string]interface{})
+	var main = environment.Get("databases").(map[string]interface{})["redis"].(map[string]interface{})
 
 	var host = main["host"].(string)
 	var port = int(main["port"].(float64))

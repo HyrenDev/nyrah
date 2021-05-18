@@ -10,7 +10,7 @@ import (
 	DatabaseProviders "net/hyren/nyrah/providers/databases"
 )
 
-var pool *sql.DB
+var connection *sql.DB
 
 type PostgreSQLDatabaseProvider struct {
 	DatabaseProviders.IDatabaseProvider
@@ -30,7 +30,7 @@ func (databaseProvider PostgreSQLDatabaseProvider) Prepare() {
 
 	var err error
 
-	pool, err = sql.Open("postgres", fmt.Sprintf(
+	connection, err = sql.Open("postgres", fmt.Sprintf(
 		`host=%s port=%d user=%s password=%s dbname=%s sslmode=disable search_path=%s`,
 		host, port, user, password, database, schema,
 	))
@@ -39,18 +39,18 @@ func (databaseProvider PostgreSQLDatabaseProvider) Prepare() {
 		panic(err)
 	}
 
-	err = pool.Ping()
+	err = connection.Ping()
 
 	if err != nil {
 		panic(err)
 	}
 
-	pool.SetMaxOpenConns(10)
-	pool.SetConnMaxIdleTime(5000)
+	connection.SetMaxOpenConns(10)
+	connection.SetConnMaxIdleTime(5000)
 
 	log.Println("PostgreSQL connection established successfully!")
 }
 
 func (databaseProvider PostgreSQLDatabaseProvider) Provide() *sql.DB {
-	return pool
+	return connection
 }
