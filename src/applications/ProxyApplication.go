@@ -8,45 +8,7 @@ import (
 	"time"
 
 	ProxyStatus "net/hyren/nyrah/applications/implementations"
-	"net/hyren/nyrah/misc/io"
 )
-
-func GetProxyAddress(key string) io.InetSocketAddress {
-	inetSocketAddress, found := local.CACHE.Get(fmt.Sprintf("%s_inet_socket_address", key))
-
-	if !found {
-		fmt.Println("Fetching ip address from", key, "in database...")
-
-		row, err := providers.MARIA_DB_MAIN.Provide().Query(fmt.Sprintf(
-			"SELECT `address`, `port` FROM `applications` WHERE `name`='%s'",
-			key,
-		))
-
-		if err != nil {
-			fmt.Println(err)
-
-			defer row.Close()
-		} else {
-			var address string
-			var port int
-
-			if row.Next() {
-				row.Scan(&address, &port)
-
-				defer row.Close()
-			}
-
-			inetSocketAddress = io.InetSocketAddress {
-				Host: address,
-				Port: port,
-			}
-
-			local.CACHE.Set(fmt.Sprintf("%s_inet_socket_address", key), inetSocketAddress, 5*time.Minute)
-		}
-	}
-
-	return inetSocketAddress.(io.InetSocketAddress)
-}
 
 func FetchAvailableProxiesNames() ([]string, error) {
 	availableProxiesNames, found := local.CACHE.Get("available_proxies_name")

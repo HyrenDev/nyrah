@@ -6,11 +6,11 @@ import (
 	"net"
 	"net/hyren/nyrah/minecraft/protocol"
 
-	ProxyApp "net/hyren/nyrah/applications"
+	ProxyApplication "net/hyren/nyrah/applications/implementations"
 )
 
 func ConnectToProxy(connection *protocol.Connection, proxy string) {
-	var inetSocketAddress = ProxyApp.GetProxyAddress(proxy)
+	var inetSocketAddress = ProxyApplication.GetProxyAddress(proxy)
 
 	ds, err := net.Dial("tcp", fmt.Sprintf("%s:%d", inetSocketAddress.Host, inetSocketAddress.Port))
 

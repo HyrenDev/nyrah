@@ -4,10 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"net/hyren/nyrah/applications/status"
+	"net/hyren/nyrah/cache/local"
 	"net/hyren/nyrah/minecraft"
-	PacketHandler "net/hyren/nyrah/misc/packets"
+	"net/hyren/nyrah/misc/io"
+	"net/hyren/nyrah/misc/providers"
+	"time"
 
 	ProxyStatus "net/hyren/nyrah/applications/status/implementations"
+	PacketHandler "net/hyren/nyrah/misc/packets"
 )
 
 func CreateServer(address string, port int) {
@@ -28,6 +32,43 @@ func CreateServer(address string, port int) {
 	}
 
 	fmt.Println("Started minecraft server on ", address, " with port ", port)
+}
+
+func GetProxyAddress(key string) io.InetSocketAddress {
+	inetSocketAddress, found := local.CACHE.Get(fmt.Sprintf("%s_inet_socket_address", key))
+
+	if !found {
+		fmt.Println("Fetching ip address from", key, "in database...")
+
+		row, err := providers.MARIA_DB_MAIN.Provide().Query(fmt.Sprintf(
+			"SELECT `address`, `port` FROM `applications` WHERE `name`='%s'",
+			key,
+		))
+
+		if err != nil {
+			fmt.Println(err)
+
+			defer row.Close()
+		} else {
+			var address string
+			var port int
+
+			if row.Next() {
+				row.Scan(&address, &port)
+
+				defer row.Close()
+			}
+
+			inetSocketAddress = io.InetSocketAddress {
+				Host: address,
+				Port: port,
+			}
+
+			local.CACHE.Set(fmt.Sprintf("%s_inet_socket_address", key), inetSocketAddress, 5*time.Minute)
+		}
+	}
+
+	return inetSocketAddress.(io.InetSocketAddress)
 }
 
 func GetBalancedProxyApplicationName(proxies []string) (string, error) {

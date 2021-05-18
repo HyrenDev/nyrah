@@ -3,16 +3,14 @@ package packets
 import (
 	"errors"
 	"fmt"
-	"net/hyren/nyrah/minecraft/chat"
 	"net/hyren/nyrah/minecraft/protocol"
 	"net/hyren/nyrah/minecraft/protocol/codecs"
 	"net/hyren/nyrah/minecraft/protocol/packet"
 	"reflect"
 	"strings"
 
-	ProxyApp "net/hyren/nyrah/applications"
+	ProxyApplication "net/hyren/nyrah/applications"
 	ProxyConnector "net/hyren/nyrah/misc/connector"
-	Constants "net/hyren/nyrah/misc/constants"
 	Config "net/hyren/nyrah/misc/utils"
 	User "net/hyren/nyrah/users"
 )
@@ -31,9 +29,9 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			connection.State = protocol.State(uint8(handshake.NextState))
 
 			handshake.NextState = 2
-			handshake.ServerAddress = codecs.String(string(handshake.ServerAddress) + "%ABC%" + strings.Split(connection.Handle.RemoteAddr().String(), ":")[0])
+			handshake.ServerAddress = codecs.String(strings.Split(connection.Handle.RemoteAddr().String(), ":")[0])
 
-			fmt.Println("Received ping request from:", handshake.ServerAddress)
+			fmt.Println("Received ping request from:", connection.Handle.RemoteAddr().String())
 
 			connection.PacketQueue[0] = handshake
 
@@ -98,23 +96,23 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 				if Config.IsMaintenanceModeEnabled() == true && !User.IsHelperOrHigher(
 					name,
 				) {
-					disconnectBecauseMaintenanceModeIsEnabled(
+					User.DisconnectBecauseMaintenanceModeIsEnabled(
 						connection,
 					)
 					return nil
 				}
 
-				proxies, err := ProxyApp.FetchAvailableProxiesNames()
+				proxies, err := ProxyApplication.FetchAvailableProxiesNames()
 
 				if err != nil {
-					disconnectBecauseNotHaveProxyToSend(
+					User.DisconnectBecauseNotHaveProxyToSend(
 						connection,
 					)
 					return nil
 				}
 
 				if len(proxies) == 0 {
-					disconnectBecauseNotHaveProxyToSend(
+					User.DisconnectBecauseNotHaveProxyToSend(
 						connection,
 					)
 					return nil
@@ -123,10 +121,10 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 				connection.PacketQueue[1] = loginStart
 				connection.Stop = true
 
-				key, err := ProxyApp.GetRandomProxy(proxies)
+				key, err := ProxyApplication.GetRandomProxy(proxies)
 
 				if err != nil {
-					disconnectBecauseNotHaveProxyToSend(
+					User.DisconnectBecauseNotHaveProxyToSend(
 						connection,
 					)
 					return nil
@@ -144,22 +142,4 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 	}
 
 	return nil
-}
-
-func disconnectBecauseNotHaveProxyToSend(connection *protocol.Connection) {
-	connection.Disconnect(chat.TextComponent{
-		Text: fmt.Sprintf(
-			"%s\n\n§r§cNão foi possível localizar um proxy para enviar você.",
-			Constants.SERVER_PREFIX,
-		),
-	})
-}
-
-func disconnectBecauseMaintenanceModeIsEnabled(connection *protocol.Connection) {
-	connection.Disconnect(chat.TextComponent{
-		Text: fmt.Sprintf(
-			"%s\n\n§r§cO servidor atualmente encontra-se em manutenção.",
-			Constants.SERVER_PREFIX,
-		),
-	})
 }

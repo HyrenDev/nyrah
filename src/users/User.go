@@ -3,6 +3,9 @@ package users
 import (
 	"fmt"
 	"net/hyren/nyrah/cache/local"
+	"net/hyren/nyrah/minecraft/chat"
+	"net/hyren/nyrah/minecraft/protocol"
+	Constants "net/hyren/nyrah/misc/constants"
 	"time"
 
 	NyrahProvider "net/hyren/nyrah/misc/providers"
@@ -31,4 +34,22 @@ func IsHelperOrHigher(name string) bool {
 	}
 
 	return userGroupsDue.(bool)
+}
+
+func DisconnectBecauseNotHaveProxyToSend(connection *protocol.Connection) {
+	connection.Disconnect(chat.TextComponent{
+		Text: fmt.Sprintf(
+			"%s\n\n§r§cNão foi possível localizar um proxy para enviar você.",
+			Constants.SERVER_PREFIX,
+		),
+	})
+}
+
+func DisconnectBecauseMaintenanceModeIsEnabled(connection *protocol.Connection) {
+	connection.Disconnect(chat.TextComponent{
+		Text: fmt.Sprintf(
+			"%s\n\n§r§cO servidor atualmente encontra-se em manutenção.",
+			Constants.SERVER_PREFIX,
+		),
+	})
 }
