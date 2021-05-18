@@ -18,15 +18,6 @@ import (
 
 var (
 	CACHE = cache.New(cache.NoExpiration, 10*time.Second)
-
-	WHITELISTED_GROUPS = []string {
-		"MASTER",
-		"DIRECTOR",
-		"MANAGER",
-		"ADMINISTRATOR",
-		"MODERATOR",
-		"HELPER",
-	}
 )
 
 func GetMOTD() chat.TextComponent {
@@ -65,7 +56,7 @@ func GetMOTD() chat.TextComponent {
 				}
 			}
 
-			CACHE.Set("motd", motd, 15*time.Second)
+			CACHE.Set("motd", motd, 5*time.Second)
 		}
 	}
 
@@ -83,27 +74,19 @@ func IsMaintenanceModeEnabled() bool {
 		defer db.Close()
 
 		if err == nil && row.Next() {
-			_ = row.Scan(&isMaintenanceModeEnabled)
+			var currentState bool
 
-			CACHE.Set("maintenance", isMaintenanceModeEnabled, 1*time.Second)
+			row.Scan(&currentState)
 
 			defer row.Close()
+
+			isMaintenanceModeEnabled = currentState
+
+			CACHE.Set("maintenance", isMaintenanceModeEnabled, 1*time.Second)
 		}
 	}
 
-	isMaintenanceModeEnabledState, _ := strconv.ParseBool(string(isMaintenanceModeEnabled.([]byte)))
-
-	return isMaintenanceModeEnabledState
-}
-
-func IsGroupWhitelisted(group_name string) bool {
-	for _, item := range WHITELISTED_GROUPS {
-		if item == group_name {
-			return true
-		}
-	}
-
-	return false
+	return isMaintenanceModeEnabled.(bool)
 }
 
 func GetOnlinePlayers() int {
@@ -141,6 +124,8 @@ func GetMaxPlayers() int {
 
 		row, err := db.Query("SELECT `slots` FROM `applications` WHERE `name`='nyrah';")
 
+		defer db.Close()
+
 		if err != nil {
 			return 0
 		}
@@ -152,7 +137,6 @@ func GetMaxPlayers() int {
 		CACHE.Set("max_players", maxPlayers, 3*time.Second)
 
 		defer row.Close()
-		defer db.Close()
 	}
 
 	maxPlayersValue, _ := strconv.Atoi(string(maxPlayers.([]byte)))
@@ -161,22 +145,28 @@ func GetMaxPlayers() int {
 }
 
 func GetFavicon() (string, error) {
-	path, err := os.Getwd()
+	serverIcon, found := CACHE.Get("server_icon")
 
-	if err != nil {
-		log.Println(err)
+	if !found {
+		path, err := os.Getwd()
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		file, err := ioutil.ReadFile(path + "/public/favicon.png")
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		b64 := base64.StdEncoding.EncodeToString(file)
+		serverIcon = "data:image/png;base64," + b64
+
+		CACHE.Set("server_icon", serverIcon, 5*time.Second)
 	}
 
-	file, err := ioutil.ReadFile(path + "/public/favicon.png")
-
-	if err != nil {
-		log.Println(err)
-	}
-
-	b64 := base64.StdEncoding.EncodeToString(file)
-	output := "data:image/png;base64," + b64
-
-	return output, nil
+	return serverIcon.(string), nil
 }
 
 func GetServerAddress() string {

@@ -20,7 +20,11 @@ func SendToProxy(connection *protocol.Connection, name string) {
 	ds, err := net.Dial("tcp", fmt.Sprintf("%s:%d", inetSocketAddress.GetHostAddress(), inetSocketAddress.GetPort()))
 
 	if err != nil {
-		_ = connection.Close()
+		connection.Close()
+
+		fmt.Println(err)
+
+		return
 	}
 
 	us := connection.Handle
@@ -30,7 +34,13 @@ func SendToProxy(connection *protocol.Connection, name string) {
 	bg := protocol.NewConnection(ds)
 
 	for _, item := range connection.PacketQueue {
-		_, _ = bg.Write(item)
+		id, err := bg.Write(item)
+
+		if err != nil {
+			fmt.Printf("Error in packet queue: %s", err)
+		} else {
+			fmt.Printf("Wroted packet id #%d", id)
+		}
 	}
 
 	go copy(us, ds)
