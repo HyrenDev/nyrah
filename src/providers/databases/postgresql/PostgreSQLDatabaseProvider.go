@@ -40,27 +40,9 @@ func (databaseProvider PostgreSQLDatabaseProvider) Prepare() {
 		panic(err)
 	}
 
-	err = connection.Ping()
-
-	if err != nil {
-		panic(err)
-	}
-
 	connection.SetMaxOpenConns(10)
 	connection.SetMaxIdleConns(10)
 	connection.SetConnMaxLifetime(5*time.Minute)
-
-	go func() {
-		for {
-			rows, err := connection.Query(`SELECT 1;`)
-
-			if err != nil {
-				panic(err)
-			}
-
-			defer rows.Close()
-		}
-	}()
 
 	log.Println("PostgreSQL connection established successfully!")
 }
