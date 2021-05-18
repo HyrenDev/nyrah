@@ -56,9 +56,5 @@ func (redisDatabaseProvider RedisDatabaseProvider) Provide() redis.Conn {
 		},
 	}
 
-	connection := pool.Get()
-
-	defer connection.Close()
-
-	return connection
+	return pool.Get()
 }
