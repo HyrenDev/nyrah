@@ -19,7 +19,9 @@ func GetMOTD() chat.TextComponent {
 	motd, found := local.CACHE.Get("motd")
 
 	if !found {
-		row, err := NyrahProvider.MARIA_DB_MAIN.Provide().Query("SELECT `first_line`, `second_line` FROM `motd` LIMIT 1")
+		row, err := NyrahProvider.POSTGRESQL_MAIN.Provide().Query(fmt.Sprintf(
+			`SELECT "first_line", "second_line" FROM "motd" LIMIT 1`,
+		))
 
 		if err != nil {
 			panic(err)
@@ -66,7 +68,9 @@ func IsMaintenanceModeEnabled() bool {
 	isMaintenanceModeEnabled, found := local.CACHE.Get("maintenance")
 
 	if !found {
-		row, err := NyrahProvider.MARIA_DB_MAIN.Provide().Query("SELECT `current_state` FROM `maintenance` WHERE `application_name`='nyrah';")
+		row, err := NyrahProvider.POSTGRESQL_MAIN.Provide().Query(fmt.Sprintf(
+			`SELECT "current_state" FROM "maintenance" WHERE "application_name"='nyrah';`,
+		))
 
 		if err == nil && row.Next() {
 			var currentState bool
@@ -92,7 +96,9 @@ func GetMaxPlayers() int {
 	maxPlayers, found := local.CACHE.Get("max_players")
 
 	if !found {
-		row, err := NyrahProvider.MARIA_DB_MAIN.Provide().Query("SELECT `slots` FROM `applications` WHERE `name`='nyrah';")
+		row, err := NyrahProvider.POSTGRESQL_MAIN.Provide().Query(fmt.Sprintf(
+			`SELECT "slots" FROM "applications" WHERE "name"='nyrah';`,
+		))
 
 		if err != nil {
 			return 0

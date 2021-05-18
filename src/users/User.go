@@ -16,12 +16,10 @@ func IsHelperOrHigher(name string) bool {
 	userGroupsDue, found := local.CACHE.Get(fmt.Sprintf("is_helper_or_higher_%s", name))
 
 	if !found {
-		rows, err := NyrahProvider.MARIA_DB_MAIN.Provide().Query(
-			fmt.Sprintf(
-				"SELECT User.`id`, UserGroupDue.`group_name`, UserGroupDue.`due_at` FROM `users` AS User INNER JOIN `users_groups_due` AS UserGroupDue WHERE User.name LIKE '%s' AND UserGroupDue.user_id=User.id;",
+		rows, err := NyrahProvider.POSTGRESQL_MAIN.Provide().Query(fmt.Sprintf(
+				`SELECT "users"."id", "users_groups_due"."group_name", "due_at" FROM "users" INNER JOIN "users_groups_due" ON "user_id"="users"."id" AND "users"."name" ILIKE '%s' AND "users_groups_due"."group_name"=ANY(ARRAY['MASTER', 'DIRECTOR', 'MANAGER', 'MODERATOR', 'HELPER']);`,
 				name,
-			),
-		)
+		))
 
 		if err != nil {
 			log.Println(err)

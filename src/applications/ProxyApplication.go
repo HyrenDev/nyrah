@@ -18,8 +18,8 @@ func GetProxyAddress(key string) io.InetSocketAddress {
 	if !found {
 		log.Println("Fetching ip address from", key, "in database...")
 
-		row, err := providers.MARIA_DB_MAIN.Provide().Query(fmt.Sprintf(
-			"SELECT `address`, `port` FROM `applications` WHERE `name`='%s'",
+		row, err := providers.POSTGRESQL_MAIN.Provide().Query(fmt.Sprintf(
+			`SELECT "address", "port" FROM "applications" WHERE "name"='%s'`,
 			key,
 		))
 
@@ -69,7 +69,9 @@ func FetchAvailableProxiesNames() ([]string, error) {
 	availableProxiesNames, found := local.CACHE.Get("available_proxies_name")
 
 	if !found {
-		rows, err := providers.MARIA_DB_MAIN.Provide().Query("SELECT `name` FROM `applications` WHERE `application_type`='PROXY';")
+		rows, err := providers.POSTGRESQL_MAIN.Provide().Query(fmt.Sprintf(
+			`SELECT "name" FROM "applications" WHERE "application_type"='PROXY';`,
+		))
 
 		if err != nil {
 			return make([]string, 0), err
