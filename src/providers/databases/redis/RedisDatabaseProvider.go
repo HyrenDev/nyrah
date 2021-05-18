@@ -3,10 +3,10 @@ package redis
 import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"log"
 	"net/hyren/nyrah/environment"
-	DatabaseProviders "net/hyren/nyrah/providers/databases"
 	"time"
+
+	DatabaseProviders "net/hyren/nyrah/providers/databases"
 )
 
 type RedisDatabaseProvider struct {
@@ -26,19 +26,25 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 		MaxIdle:     3,
 		IdleTimeout: 240 * time.Second,
 		Dial: func() (redis.Conn, error) {
+			fmt.Printf("Connecting to redis database (%s:%d)...\n", host, port)
+
 			c, err := redis.Dial("tcp", fmt.Sprintf("%s:%d", host, port))
 
 			if err != nil {
-				log.Println(nil)
+				fmt.Println(err)
 			}
 
 			if _, err := c.Do("AUTH", password); err != nil {
+				fmt.Println("Autho:", err)
+
 				_ = c.Close()
 
 				return nil, err
 			}
 
 			if _, err := c.Do("SELECT", 0); err != nil {
+				fmt.Println("Select:", err)
+
 				_ = c.Close()
 
 				return nil, err
@@ -48,6 +54,8 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 		},
 		TestOnBorrow: func(c redis.Conn, t time.Time) error {
 			_, err := c.Do("PING")
+
+			fmt.Println("Ping:", err)
 
 			return err
 		},
