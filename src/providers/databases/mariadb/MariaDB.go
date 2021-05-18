@@ -3,6 +3,7 @@ package mariadb
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"net/hyren/nyrah/environment"
 
 	DatabaseProviders "net/hyren/nyrah/providers/databases"
