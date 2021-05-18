@@ -45,6 +45,8 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 				return nil, err
 			}
 
+			log.Println("Redis connection established successfully!")
+
 			return c, err
 		},
 		TestOnBorrow: func(c redis.Conn, t time.Time) error {
@@ -53,8 +55,6 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 			return err
 		},
 	}
-
-	log.Println("Redis connection established successfully!")
 }
 
 func (redisDatabaseProvider RedisDatabaseProvider) Provide() *redis.Pool {
