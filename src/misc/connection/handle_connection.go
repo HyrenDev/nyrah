@@ -37,9 +37,9 @@ func SendToProxy(connection *protocol.Connection, name string) {
 		id, err := bg.Write(item)
 
 		if err != nil {
-			fmt.Printf("Error in packet queue: %s", err)
+			fmt.Printf("Error in packet queue: %s\n", err)
 		} else {
-			fmt.Printf("Wroted packet id #%d", id)
+			fmt.Printf("Wroted packet id #%d\n", id)
 		}
 	}
 
