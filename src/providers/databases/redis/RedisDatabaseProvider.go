@@ -42,7 +42,7 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 				return nil, err
 			}
 
-			if _, err := c.Do("SELECT", 0); err != nil {
+			if _, err := c.Do("SELECT", "0"); err != nil {
 				fmt.Println("Select:", err)
 
 				_ = c.Close()
@@ -61,7 +61,7 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 		},
 	}
 
-	response, err := redisDatabaseProvider.pool.Get().Do("PING")
+	response, err := redisDatabaseProvider.pool.Get().Do("GET", "applications:proxy-1")
 
 	if err != nil {
 		fmt.Println("Test:", err)
