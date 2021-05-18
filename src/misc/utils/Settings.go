@@ -9,7 +9,6 @@ import (
 	"net/hyren/nyrah/cache/local"
 	"net/hyren/nyrah/minecraft/chat"
 	"os"
-	"strconv"
 	"time"
 
 	NyrahProvider "net/hyren/nyrah/misc/providers"
@@ -93,31 +92,9 @@ func IsMaintenanceModeEnabled() bool {
 }
 
 func GetMaxPlayers() int {
-	maxPlayers, found := local.CACHE.Get("max_players")
+	var settings = readSettingsFile()
 
-	if !found {
-		row, err := NyrahProvider.POSTGRESQL_MAIN.Provide().Query(fmt.Sprintf(
-			`SELECT "slots" FROM "applications" WHERE "name"='nyrah';`,
-		))
-
-		if err != nil {
-			return 0
-		}
-
-		if row.Next() {
-			_ = row.Scan(&maxPlayers)
-		}
-
-		defer row.Close()
-
-		if maxPlayers, err = strconv.Atoi(string(maxPlayers.([]byte))); err != nil {
-			local.CACHE.Set("max_players", 0, 3*time.Second)
-		} else {
-			local.CACHE.Set("max_players", maxPlayers, 3*time.Second)
-		}
-	}
-
-	return maxPlayers.(int)
+	return settings["max_players"].(int)
 }
 
 func GetFavicon() (string, error) {
