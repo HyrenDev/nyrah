@@ -22,7 +22,7 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 	var port = int(main["port"].(float64))
 	var password = main["password"].(string)
 
-	redisDatabaseProvider.pool = &redis.Pool {
+	var pool = &redis.Pool {
 		MaxIdle:     3,
 		IdleTimeout: 240 * time.Second,
 		Dial: func() (redis.Conn, error) {
@@ -38,7 +38,7 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 				return nil, err
 			}
 
-			if _, err := connection.Do("SELECT", 0); err != nil {
+			if _, err := connection.Do("SELECT", "0"); err != nil {
 				_ = connection.Close()
 
 				return nil, err
@@ -52,6 +52,8 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 			return err
 		},
 	}
+
+	redisDatabaseProvider.pool = pool
 }
 
 func (redisDatabaseProvider RedisDatabaseProvider) Provide() redis.Conn {
