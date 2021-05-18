@@ -200,7 +200,7 @@ func ReadSettingsFile() map[string]interface{} {
 		log.Println(err)
 	}
 
-	dat, err := ioutil.ReadFile(path + "/settings.json")
+	file, err := os.ReadFile(path + "/settings.json")
 
 	if err != nil {
 		log.Println(err)
@@ -208,7 +208,7 @@ func ReadSettingsFile() map[string]interface{} {
 
 	var data map[string]interface{}
 
-	err = json.Unmarshal(dat, &data)
+	err = json.Unmarshal(file, &data)
 
 	return data
 }
