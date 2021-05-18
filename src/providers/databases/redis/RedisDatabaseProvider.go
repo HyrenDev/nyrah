@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"net/hyren/nyrah/environment"
-	"time"
-
 	DatabaseProviders "net/hyren/nyrah/providers/databases"
+	"time"
 )
 
 type RedisDatabaseProvider struct {
@@ -16,6 +15,10 @@ type RedisDatabaseProvider struct {
 }
 
 func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
+	//
+}
+
+func (redisDatabaseProvider RedisDatabaseProvider) Provide() redis.Conn {
 	var main = environment.Get("databases").(map[string]interface{})["redis"].(map[string]interface{})["main"].(map[string]interface{})
 
 	var host = main["host"].(string)
@@ -53,13 +56,9 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 		},
 	}
 
-	redisDatabaseProvider.pool = pool
-}
+	connection := pool.Get()
 
-func (redisDatabaseProvider RedisDatabaseProvider) Provide() redis.Conn {
-	redisConnection := redisDatabaseProvider.pool.Get()
+	defer connection.Close()
 
-	defer redisConnection.Close()
-
-	return redisConnection
+	return connection
 }
