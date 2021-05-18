@@ -19,7 +19,7 @@ import (
 var (
 	CACHE = cache.New(cache.NoExpiration, 10*time.Second)
 
-	WHITELISTED_GROUPS = []string{
+	WHITELISTED_GROUPS = []string {
 		"MASTER",
 		"DIRECTOR",
 		"MANAGER",
@@ -30,13 +30,11 @@ var (
 )
 
 func GetMOTD() chat.TextComponent {
-	db := Databases.StartMariaDB()
-
-	var maintenance = IsMaintenanceModeEnabled()
-
 	motd, found := CACHE.Get("motd")
 
 	if !found {
+		db := Databases.StartMariaDB()
+
 		row, err := db.Query("SELECT `first_line`, `second_line` FROM `motd` LIMIT 1")
 
 		if err == nil && row.Next() {
@@ -44,6 +42,10 @@ func GetMOTD() chat.TextComponent {
 			var second_line string
 
 			_ = row.Scan(&first_line, &second_line)
+
+			defer db.Close()
+
+			var maintenance = IsMaintenanceModeEnabled()
 
 			if maintenance == true {
 				motd = chat.TextComponent{
@@ -63,24 +65,22 @@ func GetMOTD() chat.TextComponent {
 				}
 			}
 
-			defer row.Close()
-
 			CACHE.Set("motd", motd, 15*time.Second)
 		}
 	}
-
-	defer db.Close()
 
 	return motd.(chat.TextComponent)
 }
 
 func IsMaintenanceModeEnabled() bool {
-	db := Databases.StartMariaDB()
-
 	isMaintenanceModeEnabled, found := CACHE.Get("maintenance")
 
 	if !found {
+		db := Databases.StartMariaDB()
+
 		row, err := db.Query("SELECT `current_state` FROM `maintenance` WHERE `application_name`='nyrah';")
+
+		defer db.Close()
 
 		if err == nil && row.Next() {
 			_ = row.Scan(&isMaintenanceModeEnabled)
@@ -90,8 +90,6 @@ func IsMaintenanceModeEnabled() bool {
 			defer row.Close()
 		}
 	}
-
-	defer db.Close()
 
 	isMaintenanceModeEnabledState, _ := strconv.ParseBool(string(isMaintenanceModeEnabled.([]byte)))
 
