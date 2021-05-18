@@ -1,17 +1,27 @@
 package main
 
 import (
-	Proxy "net/hyren/nyrah/misc/proxy"
-	Config "net/hyren/nyrah/misc/utils"
+	"fmt"
+	"net/hyren/nyrah/misc/providers"
+	"os"
 
-	"log"
+	Proxy "net/hyren/nyrah/applications/implementations"
+	Config "net/hyren/nyrah/misc/utils"
 )
 
 func main() {
-	log.Println("Starting proxy server")
+	err := providers.PreparePrimaryProviders()
 
-	Proxy.CreateServer(
-		Config.GetServerAddress(),
-		Config.GetServerPort(),
-	)
+	if err != nil {
+		fmt.Println(err)
+
+		os.Exit(0)
+	} else {
+		fmt.Println("Starting proxy server")
+
+		Proxy.CreateServer(
+			Config.GetServerAddress(),
+			Config.GetServerPort(),
+		)
+	}
 }

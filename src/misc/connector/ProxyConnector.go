@@ -1,4 +1,4 @@
-package connection
+package connector
 
 import (
 	"fmt"
@@ -9,15 +9,10 @@ import (
 	ProxyApp "net/hyren/nyrah/applications"
 )
 
-func copy(wc io.WriteCloser, r io.Reader) {
-	defer wc.Close()
-	io.Copy(wc, r)
-}
+func ConnectToProxy(connection *protocol.Connection, proxy string) {
+	var inetSocketAddress = ProxyApp.GetProxyAddress(proxy)
 
-func SendToProxy(connection *protocol.Connection, name string) {
-	var inetSocketAddress = ProxyApp.GetProxyAddress(name)
-
-	ds, err := net.Dial("tcp", fmt.Sprintf("%s:%d", inetSocketAddress.GetHostAddress(), inetSocketAddress.GetPort()))
+	ds, err := net.Dial("tcp", fmt.Sprintf("%s:%d", inetSocketAddress.Host, inetSocketAddress.Port))
 
 	if err != nil {
 		connection.Close()
@@ -29,7 +24,10 @@ func SendToProxy(connection *protocol.Connection, name string) {
 
 	us := connection.Handle
 
-	go copy(ds, us)
+	go func(wc io.WriteCloser, r io.Reader) {
+		defer wc.Close()
+		io.Copy(wc, r)
+	}(ds, us)
 
 	bg := protocol.NewConnection(ds)
 
@@ -43,5 +41,8 @@ func SendToProxy(connection *protocol.Connection, name string) {
 		}
 	}
 
-	go copy(us, ds)
+	go func(wc io.WriteCloser, r io.Reader) {
+		defer wc.Close()
+		io.Copy(wc, r)
+	}(us, ds)
 }

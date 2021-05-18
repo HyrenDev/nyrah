@@ -3,7 +3,6 @@ package packets
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/hyren/nyrah/minecraft/chat"
 	"net/hyren/nyrah/minecraft/protocol"
 	"net/hyren/nyrah/minecraft/protocol/codecs"
@@ -12,7 +11,7 @@ import (
 	"strings"
 
 	ProxyApp "net/hyren/nyrah/applications"
-	Connection "net/hyren/nyrah/misc/connection"
+	ProxyConnector "net/hyren/nyrah/misc/connector"
 	Constants "net/hyren/nyrah/misc/constants"
 	Config "net/hyren/nyrah/misc/utils"
 	User "net/hyren/nyrah/users"
@@ -61,7 +60,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 				favicon, err := Config.GetFavicon()
 
 				if err != nil {
-					log.Println("Cannot find favicon")
+					fmt.Println("Cannot find favicon")
 				} else {
 					response.Status.Favicon = favicon
 				}
@@ -133,7 +132,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 					return nil
 				}
 
-				go Connection.SendToProxy(connection, key)
+				go ProxyConnector.ConnectToProxy(connection, key)
 			} else {
 				fmt.Printf("Falha ao receber a conexão de %s", string(loginStart.Username))
 			}

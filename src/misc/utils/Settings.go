@@ -5,36 +5,27 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"github.com/patrickmn/go-cache"
 	"io/ioutil"
-	"log"
+	"net/hyren/nyrah/cache/local"
 	"net/hyren/nyrah/minecraft/chat"
 	"os"
 	"strconv"
 	"time"
 
-	Databases "net/hyren/nyrah/databases"
-)
-
-var (
-	CACHE = cache.New(cache.NoExpiration, 10*time.Second)
+	NyrahProvider "net/hyren/nyrah/misc/providers"
 )
 
 func GetMOTD() chat.TextComponent {
-	motd, found := CACHE.Get("motd")
+	motd, found := local.CACHE.Get("motd")
 
 	if !found {
-		db := Databases.StartMariaDB()
-
-		row, err := db.Query("SELECT `first_line`, `second_line` FROM `motd` LIMIT 1")
+		row, err := NyrahProvider.MARIA_DB_MAIN.Provide().Query("SELECT `first_line`, `second_line` FROM `motd` LIMIT 1")
 
 		if err == nil && row.Next() {
 			var first_line string
 			var second_line string
 
 			_ = row.Scan(&first_line, &second_line)
-
-			defer db.Close()
 
 			var maintenance = IsMaintenanceModeEnabled()
 
@@ -56,22 +47,22 @@ func GetMOTD() chat.TextComponent {
 				}
 			}
 
-			CACHE.Set("motd", motd, 5*time.Second)
+			local.CACHE.Set("motd", motd, 5*time.Second)
 		}
+	}
+
+	if motd == nil {
+		return GetMOTD()
 	}
 
 	return motd.(chat.TextComponent)
 }
 
 func IsMaintenanceModeEnabled() bool {
-	isMaintenanceModeEnabled, found := CACHE.Get("maintenance")
+	isMaintenanceModeEnabled, found := local.CACHE.Get("maintenance")
 
 	if !found {
-		db := Databases.StartMariaDB()
-
-		row, err := db.Query("SELECT `current_state` FROM `maintenance` WHERE `application_name`='nyrah';")
-
-		defer db.Close()
+		row, err := NyrahProvider.MARIA_DB_MAIN.Provide().Query("SELECT `current_state` FROM `maintenance` WHERE `application_name`='nyrah';")
 
 		if err == nil && row.Next() {
 			var currentState bool
@@ -82,29 +73,29 @@ func IsMaintenanceModeEnabled() bool {
 
 			isMaintenanceModeEnabled = currentState
 
-			CACHE.Set("maintenance", isMaintenanceModeEnabled, 1*time.Second)
+			local.CACHE.Set("maintenance", isMaintenanceModeEnabled, 1*time.Second)
 		}
 	}
 
 	if isMaintenanceModeEnabled == nil {
-		return false
+		return IsMaintenanceModeEnabled()
 	}
 
 	return isMaintenanceModeEnabled.(bool)
 }
 
 func GetOnlinePlayers() int {
-	redisConnection := Databases.StartRedis().Get()
-
 	var onlinePlayers int
 
 	cursor := 0
 
 	for ok := true; ok; ok = cursor != 0 {
-		result, err := redis.Values(redisConnection.Do("SCAN", cursor, "MATCH", "users:*"))
+		result, err := redis.Values(
+			NyrahProvider.REDIS_MAIN.Provide().Do("SCAN", cursor, "MATCH", "users:*"),
+		)
 
 		if err != nil {
-			log.Println(err)
+			fmt.Println(err)
 
 			return 0
 		}
@@ -115,20 +106,14 @@ func GetOnlinePlayers() int {
 		onlinePlayers += len(keys)
 	}
 
-	defer redisConnection.Close()
-
 	return onlinePlayers
 }
 
 func GetMaxPlayers() int {
-	maxPlayers, found := CACHE.Get("max_players")
+	maxPlayers, found := local.CACHE.Get("max_players")
 
 	if !found {
-		db := Databases.StartMariaDB()
-
-		row, err := db.Query("SELECT `slots` FROM `applications` WHERE `name`='nyrah';")
-
-		defer db.Close()
+		row, err := NyrahProvider.MARIA_DB_MAIN.Provide().Query("SELECT `slots` FROM `applications` WHERE `name`='nyrah';")
 
 		if err != nil {
 			return 0
@@ -138,7 +123,7 @@ func GetMaxPlayers() int {
 			_ = row.Scan(&maxPlayers)
 		}
 
-		CACHE.Set("max_players", maxPlayers, 3*time.Second)
+		local.CACHE.Set("max_players", maxPlayers, 3*time.Second)
 
 		defer row.Close()
 	}
@@ -149,61 +134,61 @@ func GetMaxPlayers() int {
 }
 
 func GetFavicon() (string, error) {
-	serverIcon, found := CACHE.Get("server_icon")
+	serverIcon, found := local.CACHE.Get("server_icon")
 
 	if !found {
 		path, err := os.Getwd()
 
 		if err != nil {
-			log.Println(err)
+			fmt.Println(err)
 		}
 
 		file, err := ioutil.ReadFile(path + "/public/favicon.png")
 
 		if err != nil {
-			log.Println(err)
+			fmt.Println(err)
 		}
 
 		b64 := base64.StdEncoding.EncodeToString(file)
 		serverIcon = "data:image/png;base64," + b64
 
-		CACHE.Set("server_icon", serverIcon, 5*time.Second)
+		local.CACHE.Set("server_icon", serverIcon, 5*time.Second)
 	}
 
 	return serverIcon.(string), nil
 }
 
 func GetServerAddress() string {
-	var settings = ReadSettingsFile()
+	var settings = readSettingsFile()
 
 	return settings["inet_socket_address"].(map[string]interface{})["host"].(string)
 }
 
 func GetServerPort() int {
-	var settings = ReadSettingsFile()
+	var settings = readSettingsFile()
 
 	return int(settings["inet_socket_address"].(map[string]interface{})["port"].(float64))
 }
 
-func ReadSettingsFile() map[string]interface{} {
-	settings, found := CACHE.Get("settings")
+func readSettingsFile() map[string]interface{} {
+	settings, found := local.CACHE.Get("settings")
 
 	if !found {
 		path, err := os.Getwd()
 
 		if err != nil {
-			log.Println(err)
+			fmt.Println(err)
 		}
 
 		file, err := os.ReadFile(path + "/settings.json")
 
 		if err != nil {
-			log.Println(err)
+			fmt.Println(err)
 		}
 
 		err = json.Unmarshal(file, &settings)
 
-		CACHE.Set("settings", settings, 15*time.Hour)
+		local.CACHE.Set("settings", settings, 15*time.Hour)
 	}
 
 	return settings.(map[string]interface{})
