@@ -51,15 +51,17 @@ func (databaseProvider PostgreSQLDatabaseProvider) Prepare() {
 	connection.SetMaxIdleConns(0)
 	connection.SetConnMaxLifetime(999999*time.Hour)
 
+	for {
+		err = connection.Ping()
+
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	log.Println("PostgreSQL connection established successfully!")
 }
 
 func (databaseProvider PostgreSQLDatabaseProvider) Provide() *sql.DB {
-	err := connection.Ping()
-
-	if err != nil {
-		databaseProvider.Prepare()
-	}
-
 	return connection
 }
