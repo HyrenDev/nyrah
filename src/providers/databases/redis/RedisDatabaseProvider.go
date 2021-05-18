@@ -60,6 +60,14 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 			return err
 		},
 	}
+
+	response, err := redisDatabaseProvider.pool.Get().Do("PING")
+
+	if err != nil {
+		fmt.Println("Test:", err)
+	} else {
+		fmt.Println("Response:", response)
+	}
 }
 
 func (redisDatabaseProvider RedisDatabaseProvider) Provide() redis.Conn {
