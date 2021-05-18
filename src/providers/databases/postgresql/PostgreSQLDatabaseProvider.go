@@ -6,6 +6,7 @@ import (
 	_ "github.com/lib/pq"
 	"log"
 	"net/hyren/nyrah/environment"
+	"time"
 
 	DatabaseProviders "net/hyren/nyrah/providers/databases"
 )
@@ -47,10 +48,18 @@ func (databaseProvider PostgreSQLDatabaseProvider) Prepare() {
 
 	connection.SetMaxOpenConns(10)
 	connection.SetConnMaxIdleTime(5000)
+	connection.SetMaxIdleConns(0)
+	connection.SetConnMaxLifetime(999999*time.Hour)
 
 	log.Println("PostgreSQL connection established successfully!")
 }
 
 func (databaseProvider PostgreSQLDatabaseProvider) Provide() *sql.DB {
+	err := connection.Ping()
+
+	if err != nil {
+		databaseProvider.Prepare()
+	}
+
 	return connection
 }
