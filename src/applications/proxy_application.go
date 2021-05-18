@@ -21,6 +21,10 @@ func GetProxyAddress(key string) string {
 
 	if err != nil {
 		log.Println(err)
+
+		defer row.Close()
+
+		return ""
 	}
 
 	var address string
@@ -28,9 +32,9 @@ func GetProxyAddress(key string) string {
 
 	if row.Next() {
 		row.Scan(&address, &port)
-	}
 
-	defer row.Close()
+		defer row.Close()
+	}
 
 	return fmt.Sprintf("%s:%d", address, port)
 }
