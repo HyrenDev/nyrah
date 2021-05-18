@@ -4,19 +4,23 @@ import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"net/hyren/nyrah/environment"
-	"net/hyren/nyrah/providers/databases"
 	"time"
+
+	DatabaseProviders "net/hyren/nyrah/providers/databases"
 )
 
 type RedisDatabaseProvider struct {
-	databases.IDatabaseProvider
+	DatabaseProviders.IDatabaseProvider
 
 	pool *redis.Pool
 }
 
 func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
-	var _databases = environment.Get("databases").(map[string]interface{})
-	var main = _databases["redis"].(map[string]interface{})["main"].(map[string]interface{})
+	var databases = environment.Get("databases").(map[string]interface{})
+
+	fmt.Println("Redis:", databases)
+
+	var main = databases["redis"].(map[string]interface{})["main"].(map[string]interface{})
 
 	var host = main["host"].(string)
 	var port = int(main["port"].(float64))
