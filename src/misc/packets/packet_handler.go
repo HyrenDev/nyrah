@@ -155,11 +155,13 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 				}
 
 				go Connection.SendToProxy(connection, key)
+			} else {
+				fmt.Printf("Falha ao receber a conexão de %s", string(loginStart.Username))
 			}
 		}
 	default:
 		{
-			//
+			fmt.Println("Não foi possível ler esse estado", connection.State)
 		}
 	}
 
