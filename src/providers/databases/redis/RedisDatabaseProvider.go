@@ -15,17 +15,13 @@ type RedisDatabaseProvider struct {
 }
 
 func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
-	//
-}
-
-func (redisDatabaseProvider RedisDatabaseProvider) Provide() redis.Conn {
 	var main = environment.Get("databases").(map[string]interface{})["redis"].(map[string]interface{})["main"].(map[string]interface{})
 
 	var host = main["host"].(string)
 	var port = int(main["port"].(float64))
 	var password = main["password"].(string)
 
-	var pool = &redis.Pool {
+	redisDatabaseProvider.pool = &redis.Pool {
 		MaxIdle:     3,
 		IdleTimeout: 240 * time.Second,
 		Dial: func() (redis.Conn, error) {
@@ -55,6 +51,8 @@ func (redisDatabaseProvider RedisDatabaseProvider) Provide() redis.Conn {
 			return err
 		},
 	}
+}
 
-	return pool.Get()
+func (redisDatabaseProvider RedisDatabaseProvider) Provide() *redis.Pool {
+	return redisDatabaseProvider.pool
 }

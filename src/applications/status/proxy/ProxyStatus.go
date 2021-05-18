@@ -5,13 +5,19 @@ import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"net"
+	"net/hyren/nyrah/cache/local"
+	"time"
 
 	NyrahProvider "net/hyren/nyrah/misc/providers"
 )
 
 func GetApplicationOnlinePlayers(application string) (int, error) {
+	redisConnection := NyrahProvider.REDIS_MAIN.Provide().Get()
+
+	defer redisConnection.Close()
+
 	var bytes, err = redis.Bytes(
-		NyrahProvider.REDIS_MAIN.Provide().Do("GET", fmt.Sprintf("applications:%s", application)),
+		redisConnection.Do("GET", fmt.Sprintf("applications:%s", application)),
 	)
 
 	if err != nil {
@@ -29,8 +35,12 @@ func GetApplicationOnlinePlayers(application string) (int, error) {
 }
 
 func GetApplicationAddress(application string) (string, error) {
+	redisConnection := NyrahProvider.REDIS_MAIN.Provide().Get()
+
+	defer redisConnection.Close()
+
 	var bytes, err = redis.Bytes(
-		NyrahProvider.REDIS_MAIN.Provide().Do("GET", fmt.Sprintf("applications:%s", application)),
+		redisConnection.Do("GET", fmt.Sprintf("applications:%s", application)),
 	)
 
 	if err != nil {
@@ -65,26 +75,34 @@ func IsProxyOnline(server string) bool {
 }
 
 func GetOnlinePlayers() int {
-	var onlinePlayers int
+	onlinePlayers, found := local.CACHE.Get("online_players")
 
-	cursor := 0
+	if !found {
+		redisConnection := NyrahProvider.REDIS_MAIN.Provide().Get()
 
-	for ok := true; ok; ok = cursor != 0 {
-		result, err := redis.Values(
-			NyrahProvider.REDIS_MAIN.Provide().Do("SCAN", cursor, "MATCH", "users:*"),
-		)
+		defer redisConnection.Close()
 
-		if err != nil {
-			fmt.Println(err)
+		cursor := 0
 
-			return 0
+		for ok := true; ok; ok = cursor != 0 {
+			result, err := redis.Values(
+				redisConnection.Do("SCAN", cursor, "MATCH", "users:*"),
+			)
+
+			if err != nil {
+				fmt.Println(err)
+
+				return 0
+			}
+
+			cursor, _ = redis.Int(result[0], nil)
+			keys, _ := redis.Strings(result[1], nil)
+
+			onlinePlayers = onlinePlayers.(int) + len(keys)
 		}
 
-		cursor, _ = redis.Int(result[0], nil)
-		keys, _ := redis.Strings(result[1], nil)
-
-		onlinePlayers += len(keys)
+		local.CACHE.Set("online_players", onlinePlayers, 1*time.Second)
 	}
 
-	return onlinePlayers
+	return onlinePlayers.(int)
 }
