@@ -27,8 +27,8 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 		Dial: func() (redis.Conn, error) {
 			connection, err := redis.Dial("tcp", fmt.Sprintf("%s:%d", host, port))
 
-			if err != nil || connection == nil {
-				return connection, err
+			if err != nil {
+				return nil, err
 			}
 
 			if _, err := connection.Do("AUTH", password); err != nil {
@@ -37,7 +37,7 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 				return nil, err
 			}
 
-			if _, err := connection.Do("SELECT", "0"); err != nil {
+			if _, err := connection.Do("SELECT", 0); err != nil {
 				_ = connection.Close()
 
 				return nil, err
