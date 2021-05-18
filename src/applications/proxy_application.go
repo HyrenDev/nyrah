@@ -3,40 +3,107 @@ package applications
 import (
 	"errors"
 	"fmt"
+	"github.com/patrickmn/go-cache"
+	_ "github.com/patrickmn/go-cache"
 	"log"
 	"net/hyren/nyrah/applications/status"
+	"time"
 
 	Databases "net/hyren/nyrah/databases"
 )
 
-func GetProxyAddress(key string) string {
-	db := Databases.StartMariaDB()
+var (
+	CACHE = cache.New(cache.NoExpiration, 10*time.Second)
+)
 
-	row, err := db.Query(fmt.Sprintf(
-		"SELECT `address`, `port` FROM `applications` WHERE `name`='%s'",
-		key,
-	))
+type InetSocketAddress struct {
+	host string
+	port int
+}
 
-	defer db.Close()
+func (inetSocketAddress InetSocketAddress) GetHostAddress() string {
+	return inetSocketAddress.host
+}
 
-	if err != nil {
-		log.Println(err)
+func (inetSocketAddress InetSocketAddress) GetPort() int {
+	return inetSocketAddress.port
+}
 
-		defer row.Close()
+func GetProxyAddress(key string) InetSocketAddress {
+	inetSocketAddress, found := CACHE.Get(fmt.Sprintf("%s_address", key))
 
-		return ""
+	if !found {
+		db := Databases.StartMariaDB()
+
+		row, err := db.Query(fmt.Sprintf(
+			"SELECT `address`, `port` FROM `applications` WHERE `name`='%s'",
+			key,
+		))
+
+		defer db.Close()
+
+		if err != nil {
+			log.Println(err)
+
+			defer row.Close()
+		} else {
+			var address string
+			var port int
+
+			if row.Next() {
+				row.Scan(&address, &port)
+
+				defer row.Close()
+			}
+
+			inetSocketAddress = InetSocketAddress {
+				host: address,
+				port: port,
+			}
+
+			CACHE.Set(fmt.Sprintf("%s_inet_socket_address", key), inetSocketAddress, 5*time.Minute)
+		}
 	}
 
-	var address string
-	var port int
+	return inetSocketAddress.(InetSocketAddress)
+}
 
-	if row.Next() {
-		row.Scan(&address, &port)
+func FetchAvailableProxiesNames() ([]string, error) {
+	availableProxiesNames, found := CACHE.Get("available_proxies_name")
 
-		defer row.Close()
+	if !found {
+		db := Databases.StartMariaDB()
+
+		rows, err := db.Query("SELECT `name` FROM `applications` WHERE `application_type`='PROXY';")
+
+		defer db.Close()
+
+		if err != nil {
+			return make([]string, 0), err
+		}
+
+		var proxies []string
+
+		for rows.Next() {
+			var name string
+
+			err := rows.Scan(&name)
+
+			if err != nil {
+				return make([]string, 0), err
+			}
+
+			proxies = append(proxies, name)
+		}
+
+		defer rows.Close()
+
+		availableProxiesNames = proxies
+
+		CACHE.Set("available_proxies_name", availableProxiesNames, 5*time.Minute)
 	}
 
-	return fmt.Sprintf("%s:%d", address, port)
+	return availableProxiesNames.([]string), nil
 }
 
 func GetRandomProxy(proxies []string) (string, error) {

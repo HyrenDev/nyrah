@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"fmt"
 	"io"
 	"net"
 	"net/hyren/nyrah/minecraft/protocol"
@@ -14,9 +15,9 @@ func copy(wc io.WriteCloser, r io.Reader) {
 }
 
 func SendToProxy(connection *protocol.Connection, name string) {
-	var server = ProxyApp.GetProxyAddress(name)
+	var inetSocketAddress = ProxyApp.GetProxyAddress(name)
 
-	ds, err := net.Dial("tcp", server)
+	ds, err := net.Dial("tcp", fmt.Sprintf("%s:%d", inetSocketAddress.GetHostAddress(), inetSocketAddress.GetPort()))
 
 	if err != nil {
 		_ = connection.Close()

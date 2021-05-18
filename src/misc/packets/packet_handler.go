@@ -105,35 +105,14 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 					return nil
 				}
 
-				db := Databases.StartMariaDB()
-
-				rows, err := db.Query("SELECT `name` FROM `applications` WHERE `application_type`='PROXY';")
-
-				defer db.Close()
+				proxies, err := ProxyApp.FetchAvailableProxiesNames()
 
 				if err != nil {
-					return err
+					disconnectBecauseNotHaveProxyToSend(
+						connection,
+					)
+					return nil
 				}
-
-				var proxies []string
-
-				var index = 0
-
-				for rows.Next() {
-					var name string
-
-					err := rows.Scan(&name)
-
-					if err != nil {
-						return err
-					}
-
-					proxies = append(proxies, name)
-
-					index++
-				}
-
-				defer rows.Close()
 
 				if len(proxies) == 0 {
 					disconnectBecauseNotHaveProxyToSend(

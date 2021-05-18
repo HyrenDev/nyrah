@@ -194,21 +194,25 @@ func GetServerPort() int {
 }
 
 func ReadSettingsFile() map[string]interface{} {
-	path, err := os.Getwd()
+	settings, found := CACHE.Get("settings")
 
-	if err != nil {
-		log.Println(err)
+	if !found {
+		path, err := os.Getwd()
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		file, err := os.ReadFile(path + "/settings.json")
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		err = json.Unmarshal(file, &settings)
+
+		CACHE.Set("settings", settings, 15*time.Hour)
 	}
 
-	file, err := os.ReadFile(path + "/settings.json")
-
-	if err != nil {
-		log.Println(err)
-	}
-
-	var data map[string]interface{}
-
-	err = json.Unmarshal(file, &data)
-
-	return data
+	return settings.(map[string]interface{})
 }
