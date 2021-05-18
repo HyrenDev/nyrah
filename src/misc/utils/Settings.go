@@ -18,14 +18,22 @@ import (
 func GetMOTD() chat.TextComponent {
 	motd, found := local.CACHE.Get("motd")
 
+	log.Printf("MOTD: %b\n", found)
+
 	if !found {
 		row, err := NyrahProvider.MARIA_DB_MAIN.Provide().Query("SELECT `first_line`, `second_line` FROM `motd` LIMIT 1")
 
-		if err == nil && row.Next() {
+		if err != nil {
+			panic(err)
+		}
+
+		if row.Next() {
 			var firstLine string
 			var secondLine string
 
 			_ = row.Scan(&firstLine, &secondLine)
+
+			log.Printf("First Line: %s\nSecond Line: %s\n", firstLine, secondLine)
 
 			var maintenance = IsMaintenanceModeEnabled()
 
@@ -52,6 +60,8 @@ func GetMOTD() chat.TextComponent {
 	}
 
 	if motd == nil {
+		local.CACHE.Delete("motd")
+
 		return GetMOTD()
 	}
 
@@ -78,6 +88,8 @@ func IsMaintenanceModeEnabled() bool {
 	}
 
 	if isMaintenanceModeEnabled == nil {
+		local.CACHE.Delete("maintenance")
+
 		return IsMaintenanceModeEnabled()
 	}
 
@@ -98,14 +110,16 @@ func GetMaxPlayers() int {
 			_ = row.Scan(&maxPlayers)
 		}
 
-		local.CACHE.Set("max_players", maxPlayers, 3*time.Second)
-
 		defer row.Close()
+
+		if maxPlayers, err = strconv.Atoi(string(maxPlayers.([]byte))); err != nil {
+			local.CACHE.Set("max_players", 0, 3*time.Second)
+		} else {
+			local.CACHE.Set("max_players", maxPlayers, 3*time.Second)
+		}
 	}
 
-	maxPlayersValue, _ := strconv.Atoi(string(maxPlayers.([]byte)))
-
-	return maxPlayersValue
+	return maxPlayers.(int)
 }
 
 func GetFavicon() (string, error) {

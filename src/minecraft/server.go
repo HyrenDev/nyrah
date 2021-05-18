@@ -46,7 +46,6 @@ func (server *Server) ListenAndServe() (err error) {
 			continue
 		}
 
-		// log.Println("Incoming connection from " + client.RemoteAddr().String())
 		go server.handleConnection(protocol.NewConnection(client))
 	}
 }

@@ -10,7 +10,7 @@ import (
 	DatabaseProviders "net/hyren/nyrah/providers/databases"
 )
 
-var pool = make(chan *sql.DB, 10)
+var pool *sql.DB
 
 type MariaDBDatabaseProvider struct {
 	DatabaseProviders.IDatabaseProvider
@@ -27,7 +27,9 @@ func (databaseProvider MariaDBDatabaseProvider) Prepare() {
 
 	log.Printf("Connecting to MySQL database (%s:%d)...\n", host, port)
 
-	db, err := sql.Open("mysql", fmt.Sprintf(
+	var err error
+
+	pool, err = sql.Open("mysql", fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s",
 		user, password, host, port, database,
 	))
@@ -36,17 +38,18 @@ func (databaseProvider MariaDBDatabaseProvider) Prepare() {
 		panic(err)
 	}
 
-	err = db.Ping()
+	err = pool.Ping()
 
 	if err != nil {
 		panic(err)
 	}
 
-	log.Println("MySQL connection established successfully!")
+	pool.SetMaxOpenConns(10)
+	pool.SetConnMaxIdleTime(5000)
 
-	pool <- db
+	log.Println("MySQL connection established successfully!")
 }
 
 func (databaseProvider MariaDBDatabaseProvider) Provide() *sql.DB {
-	return <- pool
+	return pool
 }
