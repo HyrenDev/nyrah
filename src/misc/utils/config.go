@@ -86,6 +86,10 @@ func IsMaintenanceModeEnabled() bool {
 		}
 	}
 
+	if isMaintenanceModeEnabled == nil {
+		return false
+	}
+
 	return isMaintenanceModeEnabled.(bool)
 }
 
