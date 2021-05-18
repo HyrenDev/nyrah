@@ -8,28 +8,28 @@ import (
 	"time"
 )
 
-func getEnvironment() map[string]interface{} {
-	environment, found := local.CACHE.Get("environment")
+var (
+	environment map[string]interface{}
+)
 
-	if !found {
-		bytes, err := ioutil.ReadFile("/home/configuration/environment.json")
+func loadEnvironment() map[string]interface{} {
+	bytes, err := ioutil.ReadFile("/home/configuration/environment.json")
 
-		if err != nil {
-			log.Println(err)
-		}
-
-		err = json.Unmarshal(bytes, &environment)
-
-		local.CACHE.Set("environment", environment, 5*time.Minute)
+	if err != nil {
+		log.Println(err)
 	}
 
-	if environment == nil {
-		return getEnvironment()
-	}
+	err = json.Unmarshal(bytes, &environment)
 
-	return environment.(map[string]interface{})
+	local.CACHE.Set("environment", environment, 5*time.Minute)
+
+	return environment
 }
 
 func Get(key string) interface{} {
-	return getEnvironment()[key]
+	if environment == nil {
+		loadEnvironment()
+	}
+
+	return environment[key]
 }
