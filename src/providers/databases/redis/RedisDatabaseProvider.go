@@ -73,7 +73,5 @@ func (redisDatabaseProvider RedisDatabaseProvider) Prepare() {
 func (redisDatabaseProvider RedisDatabaseProvider) Provide() redis.Conn {
 	redisConnection := redisDatabaseProvider.pool.Get()
 
-	defer redisConnection.Close()
-
 	return redisConnection
 }
