@@ -12,10 +12,10 @@ import (
 	"strings"
 
 	ProxyApp "net/hyren/nyrah/applications"
-	Databases "net/hyren/nyrah/databases"
 	Connection "net/hyren/nyrah/misc/connection"
 	Constants "net/hyren/nyrah/misc/constants"
 	Config "net/hyren/nyrah/misc/utils"
+	User "net/hyren/nyrah/users"
 )
 
 func HandlePackets(connection *protocol.Connection, holder packet.Holder) error {
@@ -96,7 +96,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 					connection.GetRemoteAddr(),
 				))
 
-				if Config.IsMaintenanceModeEnabled() == true && !canJoin(
+				if Config.IsMaintenanceModeEnabled() == true && !User.IsHelperOrHigher(
 					name,
 				) {
 					disconnectBecauseMaintenanceModeIsEnabled(
@@ -163,67 +163,4 @@ func disconnectBecauseMaintenanceModeIsEnabled(connection *protocol.Connection) 
 			Constants.SERVER_PREFIX,
 		),
 	})
-}
-
-func canJoin(name string) bool {
-	db := Databases.StartMariaDB()
-
-	rows, err := db.Query(
-		fmt.Sprintf(
-			"SELECT `id` FROM `users` WHERE `name` LIKE '%s';",
-			name,
-		),
-	)
-
-	defer db.Close()
-
-	if err != nil {
-		log.Println(err)
-
-		defer rows.Close()
-		return false
-	}
-
-	var id string
-
-	if rows.Next() {
-		rows.Scan(&id)
-	} else {
-		defer rows.Close()
-		return false
-	}
-
-	defer rows.Close()
-
-	db = Databases.StartMariaDB()
-
-	rows, err = db.Query(
-		fmt.Sprintf(
-			"SELECT `group_name` FROM `users_groups_due` WHERE `user_id`='%s';",
-			id,
-		),
-	)
-
-	defer db.Close()
-
-	if err != nil {
-		log.Println(err)
-
-		defer rows.Close()
-		return false
-	}
-
-	for next := rows.Next(); next; next = rows.Next() {
-		var groupName string
-
-		rows.Scan(&groupName)
-
-		if Config.IsGroupWhitelisted(groupName) {
-			return true
-		}
-	}
-
-	defer rows.Close()
-
-	return false
 }

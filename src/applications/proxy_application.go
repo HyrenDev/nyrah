@@ -33,6 +33,8 @@ func GetProxyAddress(key string) InetSocketAddress {
 	inetSocketAddress, found := CACHE.Get(fmt.Sprintf("%s_address", key))
 
 	if !found {
+		fmt.Println("Fetching ip address from", key, "in database...")
+
 		db := Databases.StartMariaDB()
 
 		row, err := db.Query(fmt.Sprintf(
