@@ -2,6 +2,7 @@ package users
 
 import (
 	"fmt"
+	"log"
 	"net/hyren/nyrah/cache/local"
 	"net/hyren/nyrah/minecraft/chat"
 	"net/hyren/nyrah/minecraft/protocol"
@@ -23,7 +24,7 @@ func IsHelperOrHigher(name string) bool {
 		)
 
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 
 		userGroupsDue = rows.Next()

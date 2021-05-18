@@ -2,8 +2,8 @@ package environment
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/hyren/nyrah/cache/local"
 	"time"
 )
@@ -15,7 +15,7 @@ func getEnvironment() map[string]interface{} {
 		bytes, err := ioutil.ReadFile("/home/configuration/environment.json")
 
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 
 		err = json.Unmarshal(bytes, &environment)

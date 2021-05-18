@@ -3,6 +3,7 @@ package connector
 import (
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"net/hyren/nyrah/applications"
 	"net/hyren/nyrah/minecraft/protocol"
@@ -16,7 +17,7 @@ func ConnectToProxy(connection *protocol.Connection, proxy string) {
 	if err != nil {
 		connection.Close()
 
-		fmt.Println(err)
+		log.Println(err)
 
 		return
 	}
@@ -34,9 +35,9 @@ func ConnectToProxy(connection *protocol.Connection, proxy string) {
 		id, err := bg.Write(item)
 
 		if err != nil {
-			fmt.Printf("Error in packet queue: %s\n", err)
+			log.Printf("Error in packet queue: %s\n", err)
 		} else {
-			fmt.Printf("Wroted packet id #%d\n", id)
+			log.Printf("Wroted packet id #%d\n", id)
 		}
 	}
 

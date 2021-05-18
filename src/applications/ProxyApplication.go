@@ -3,6 +3,9 @@ package applications
 import (
 	"errors"
 	"fmt"
+	"log"
+	"net/hyren/nyrah/applications/status"
+	ProxyStatus "net/hyren/nyrah/applications/status/proxy"
 	"net/hyren/nyrah/cache/local"
 	"net/hyren/nyrah/misc/io"
 	"net/hyren/nyrah/misc/providers"
@@ -13,7 +16,7 @@ func GetProxyAddress(key string) io.InetSocketAddress {
 	inetSocketAddress, found := local.CACHE.Get(fmt.Sprintf("%s_inet_socket_address", key))
 
 	if !found {
-		fmt.Println("Fetching ip address from", key, "in database...")
+		log.Println("Fetching ip address from", key, "in database...")
 
 		row, err := providers.MARIA_DB_MAIN.Provide().Query(fmt.Sprintf(
 			"SELECT `address`, `port` FROM `applications` WHERE `name`='%s'",
@@ -21,7 +24,7 @@ func GetProxyAddress(key string) io.InetSocketAddress {
 		))
 
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 
 			defer row.Close()
 		} else {
@@ -53,7 +56,7 @@ func GetRandomProxy(proxies []string) (string, error) {
 		return "", errors.New("Cannot find an proxy to send the player")
 	}
 
-	fmt.Println("Getting status from", proxyApplicationName)
+	log.Println("Getting status from", proxyApplicationName)
 
 	if err != nil {
 		return "", err
@@ -97,45 +100,44 @@ func FetchAvailableProxiesNames() ([]string, error) {
 }
 
 func GetBalancedProxyApplicationName(proxies []string) (string, error) {
-	//var indexes = make([]int, 0)
-	//
-	//for index, proxy := range proxies {
-	//	proxyAddress, err := ProxyStatus.GetApplicationAddress(proxy)
-	//
-	//	if err == nil {
-	//		online := ProxyStatus.IsProxyOnline(
-	//			proxyAddress,
-	//		)
-	//
-	//		if online {
-	//			indexes = append(indexes, index)
-	//		}
-	//	}
-	//}
-	//
-	//applicationsStatus := make([]ApplicationStatus, len(indexes))
-	//
-	//var totalPlayers = 0
-	//
-	//for i := 0; i < len(indexes); i++ {
-	//	var name = proxies[indexes[i]]
-	//
-	//	onlinePlayers, _ := ProxyStatus.GetApplicationOnlinePlayers(name)
-	//
-	//	applicationsStatus[i] = status.ApplicationStatus{
-	//		Name:          name,
-	//		OnlinePlayers: onlinePlayers,
-	//	}
-	//
-	//	totalPlayers += onlinePlayers
-	//}
-	//
-	//if len(applicationsStatus) <= 0 {
-	//	return "", errors.New("don't have online proxies")
-	//}
-	//
-	//var index = totalPlayers % len(applicationsStatus)
-	//
-	//return applicationsStatus[index].Name, nil
-	return "", nil
+	var indexes = make([]int, 0)
+
+	for index, proxy := range proxies {
+		proxyAddress, err := ProxyStatus.GetApplicationAddress(proxy)
+
+		if err == nil {
+			online := ProxyStatus.IsProxyOnline(
+				proxyAddress,
+			)
+
+			if online {
+				indexes = append(indexes, index)
+			}
+		}
+	}
+
+	applicationsStatus := make([]status.ApplicationStatus, len(indexes))
+
+	var totalPlayers = 0
+
+	for i := 0; i < len(indexes); i++ {
+		var name = proxies[indexes[i]]
+
+		onlinePlayers, _ := ProxyStatus.GetApplicationOnlinePlayers(name)
+
+		applicationsStatus[i] = status.ApplicationStatus{
+			Name:          name,
+			OnlinePlayers: onlinePlayers,
+		}
+
+		totalPlayers += onlinePlayers
+	}
+
+	if len(applicationsStatus) <= 0 {
+		return "", errors.New("don't have online proxies")
+	}
+
+	var index = totalPlayers % len(applicationsStatus)
+
+	return applicationsStatus[index].Name, nil
 }

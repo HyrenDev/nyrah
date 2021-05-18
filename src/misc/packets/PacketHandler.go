@@ -3,6 +3,7 @@ package packets
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/hyren/nyrah/minecraft/protocol"
 	"net/hyren/nyrah/minecraft/protocol/codecs"
 	"net/hyren/nyrah/minecraft/protocol/packet"
@@ -32,7 +33,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			handshake.NextState = 2
 			handshake.ServerAddress = codecs.String(strings.Split(connection.Handle.RemoteAddr().String(), ":")[0])
 
-			fmt.Println("Received ping request from:", connection.Handle.RemoteAddr().String())
+			log.Println("Received ping request from:", connection.Handle.RemoteAddr().String())
 
 			connection.PacketQueue[0] = handshake
 
@@ -59,7 +60,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 				favicon, err := Config.GetFavicon()
 
 				if err != nil {
-					fmt.Println("Cannot find favicon")
+					log.Println("Cannot find favicon")
 				} else {
 					response.Status.Favicon = favicon
 				}
@@ -88,7 +89,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			if ok {
 				name := string(loginStart.Username)
 
-				fmt.Println(fmt.Sprintf(
+				log.Println(fmt.Sprintf(
 					"Conexão recebida de [%s/%s]",
 					name,
 					connection.GetRemoteAddr(),
@@ -133,12 +134,12 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 
 				go ProxyConnector.ConnectToProxy(connection, key)
 			} else {
-				fmt.Printf("Falha ao receber a conexão de %s", string(loginStart.Username))
+				log.Printf("Falha ao receber a conexão de %s\n", string(loginStart.Username))
 			}
 		}
 	default:
 		{
-			fmt.Println("Não foi possível ler esse estado", connection.State)
+			log.Println("Não foi possível ler esse estado", connection.State)
 		}
 	}
 

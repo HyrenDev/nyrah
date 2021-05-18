@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/hyren/nyrah/cache/local"
 	"net/hyren/nyrah/minecraft/chat"
 	"os"
@@ -21,10 +22,10 @@ func GetMOTD() chat.TextComponent {
 		row, err := NyrahProvider.MARIA_DB_MAIN.Provide().Query("SELECT `first_line`, `second_line` FROM `motd` LIMIT 1")
 
 		if err == nil && row.Next() {
-			var first_line string
-			var second_line string
+			var firstLine string
+			var secondLine string
 
-			_ = row.Scan(&first_line, &second_line)
+			_ = row.Scan(&firstLine, &secondLine)
 
 			var maintenance = IsMaintenanceModeEnabled()
 
@@ -32,7 +33,7 @@ func GetMOTD() chat.TextComponent {
 				motd = chat.TextComponent{
 					Text: fmt.Sprintf(
 						"%s\n%s",
-						first_line,
+						firstLine,
 						"§cO servidor atualmente está em manutenção.",
 					),
 				}
@@ -40,8 +41,8 @@ func GetMOTD() chat.TextComponent {
 				motd = chat.TextComponent{
 					Text: fmt.Sprintf(
 						"%s\n%s",
-						first_line,
-						second_line,
+						firstLine,
+						secondLine,
 					),
 				}
 			}
@@ -114,19 +115,19 @@ func GetFavicon() (string, error) {
 		path, err := os.Getwd()
 
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 
 		file, err := ioutil.ReadFile(path + "/public/favicon.png")
 
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 
 		b64 := base64.StdEncoding.EncodeToString(file)
 		serverIcon = "data:image/png;base64," + b64
 
-		local.CACHE.Set("server_icon", serverIcon, 5*time.Second)
+		local.CACHE.Set("server_icon", serverIcon, 5*time.Minute)
 	}
 
 	return serverIcon.(string), nil
@@ -151,13 +152,13 @@ func readSettingsFile() map[string]interface{} {
 		path, err := os.Getwd()
 
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 
 		file, err := os.ReadFile(path + "/settings.json")
 
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 
 		err = json.Unmarshal(file, &settings)
