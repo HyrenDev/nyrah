@@ -6,11 +6,13 @@ import (
 	_ "github.com/lib/pq"
 	"log"
 	"net/hyren/nyrah/environment"
+	"sync"
 	"time"
 
 	DatabaseProviders "net/hyren/nyrah/providers/databases"
 )
 
+var once sync.Once
 var connection *sql.DB
 
 type PostgreSQLDatabaseProvider struct {
@@ -31,22 +33,32 @@ func (databaseProvider PostgreSQLDatabaseProvider) Prepare() {
 
 	var err error
 
-	connection, err = sql.Open("postgres", fmt.Sprintf(
-		`host=%s port=%d user=%s password=%s dbname=%s sslmode=disable search_path=%s`,
-		host, port, user, password, database, schema,
-	))
+	once.Do(func() {
+		connection, err = sql.Open("postgres", fmt.Sprintf(
+			`host=%s port=%d user=%s password=%s dbname=%s sslmode=disable search_path=%s`,
+			host, port, user, password, database, schema,
+		))
+
+		if err != nil {
+			panic(err)
+		}
+
+		connection.SetMaxOpenConns(10)
+		connection.SetMaxIdleConns(0)
+		connection.SetConnMaxLifetime(time.Nanosecond)
+	})
+
+	log.Println("PostgreSQL connection established successfully!")
+}
+
+func (databaseProvider PostgreSQLDatabaseProvider) Provide() *sql.Tx {
+	begin, err := connection.Begin()
 
 	if err != nil {
 		panic(err)
 	}
 
-	connection.SetMaxOpenConns(10)
-	connection.SetMaxIdleConns(0)
-	connection.SetConnMaxLifetime(time.Nanosecond)
+	log.Println(begin)
 
-	log.Println("PostgreSQL connection established successfully!")
-}
-
-func (databaseProvider PostgreSQLDatabaseProvider) Provide() *sql.DB {
-	return connection
+	return begin
 }
