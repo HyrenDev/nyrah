@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"net/hyren/nyrah/applications"
+	"net/hyren/nyrah/minecraft/chat"
 	"net/hyren/nyrah/minecraft/protocol"
 )
 
@@ -15,9 +16,11 @@ func ConnectToProxy(connection *protocol.Connection, proxy string) {
 	ds, err := net.Dial("tcp", fmt.Sprintf("%s:%d", inetSocketAddress.Host, inetSocketAddress.Port))
 
 	if err != nil {
-		connection.Close()
+		connection.Disconnect(chat.TextComponent{
+			Text: err.Error(),
+		})
 
-		log.Println(err)
+		panic(err)
 
 		return
 	}
@@ -37,7 +40,7 @@ func ConnectToProxy(connection *protocol.Connection, proxy string) {
 		if err != nil {
 			log.Printf("Error in packet queue: %s\n", err)
 		} else {
-			log.Printf("Wroted packet id #%d\n", id)
+			log.Printf("Wrote packet id #%d\n", id)
 		}
 	}
 

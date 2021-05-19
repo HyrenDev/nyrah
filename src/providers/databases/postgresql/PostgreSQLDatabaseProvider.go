@@ -36,8 +36,6 @@ func (databaseProvider PostgreSQLDatabaseProvider) Prepare() {
 }
 
 func (databaseProvider PostgreSQLDatabaseProvider) Provide() *sql.DB {
-	log.Printf("Connecting to PostgreSQL database (%s:%d)...\n", host, port)
-
 	connection, err := sql.Open("postgres", fmt.Sprintf(
 		`host=%s port=%d user=%s password=%s dbname=%s sslmode=disable search_path=%s`,
 		host, port, user, password, database, schema,
