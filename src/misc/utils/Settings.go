@@ -8,17 +8,20 @@ import (
 	"log"
 	"net/hyren/nyrah/cache/local"
 	"net/hyren/nyrah/minecraft/chat"
+	"net/hyren/nyrah/misc/providers"
 	"os"
 	"time"
-
-	NyrahProvider "net/hyren/nyrah/misc/providers"
 )
 
 func GetMOTD() chat.TextComponent {
 	motd, found := local.CACHE.Get("motd")
 
 	if !found {
-		row, err := NyrahProvider.POSTGRESQL_MAIN.Provide().Query(fmt.Sprintf(
+		connection := providers.POSTGRESQL_MAIN.Provide()
+
+		defer connection.Close()
+
+		row, err := connection.Query(fmt.Sprintf(
 			`SELECT "first_line", "second_line" FROM "motd" LIMIT 1`,
 		))
 
@@ -67,7 +70,11 @@ func IsMaintenanceModeEnabled() bool {
 	isMaintenanceModeEnabled, found := local.CACHE.Get("maintenance")
 
 	if !found {
-		row, err := NyrahProvider.POSTGRESQL_MAIN.Provide().Query(fmt.Sprintf(
+		connection := providers.POSTGRESQL_MAIN.Provide()
+
+		defer connection.Close()
+
+		row, err := connection.Query(fmt.Sprintf(
 			`SELECT "current_state" FROM "maintenance" WHERE "application_name"='nyrah';`,
 		))
 

@@ -18,15 +18,17 @@ func GetProxyAddress(key string) io.InetSocketAddress {
 	if !found {
 		log.Println("Fetching ip address from", key, "in database...")
 
-		row, err := providers.POSTGRESQL_MAIN.Provide().Query(fmt.Sprintf(
+		connection := providers.POSTGRESQL_MAIN.Provide()
+
+		defer connection.Close()
+
+		row, err := connection.Query(fmt.Sprintf(
 			`SELECT "address", "port" FROM "applications" WHERE "name"='%s'`,
 			key,
 		))
 
 		if err != nil {
-			log.Println(err)
-
-			defer row.Close()
+			panic(err)
 		} else {
 			var address string
 			var port int
@@ -69,7 +71,11 @@ func FetchAvailableProxiesNames() ([]string, error) {
 	availableProxiesNames, found := local.CACHE.Get("available_proxies_name")
 
 	if !found {
-		rows, err := providers.POSTGRESQL_MAIN.Provide().Query(fmt.Sprintf(
+		connection := providers.POSTGRESQL_MAIN.Provide()
+
+		defer connection.Close()
+
+		rows, err := connection.Query(fmt.Sprintf(
 			`SELECT "name" FROM "applications" WHERE "application_type"='PROXY';`,
 		))
 

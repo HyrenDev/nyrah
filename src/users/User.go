@@ -6,17 +6,21 @@ import (
 	"net/hyren/nyrah/cache/local"
 	"net/hyren/nyrah/minecraft/chat"
 	"net/hyren/nyrah/minecraft/protocol"
-	Constants "net/hyren/nyrah/misc/constants"
+	"net/hyren/nyrah/misc/providers"
 	"time"
 
-	NyrahProvider "net/hyren/nyrah/misc/providers"
+	Constants "net/hyren/nyrah/misc/constants"
 )
 
 func IsHelperOrHigher(name string) bool {
 	userGroupsDue, found := local.CACHE.Get(fmt.Sprintf("is_helper_or_higher_%s", name))
 
 	if !found {
-		rows, err := NyrahProvider.POSTGRESQL_MAIN.Provide().Query(fmt.Sprintf(
+		connection := providers.POSTGRESQL_MAIN.Provide()
+
+		defer connection.Close()
+
+		rows, err := connection.Query(fmt.Sprintf(
 				`SELECT "users"."id", "users_groups_due"."group_name", "due_at" FROM "users" INNER JOIN "users_groups_due" ON "user_id"="users"."id" AND "users"."name" ILIKE '%s' AND "users_groups_due"."group_name"=ANY(ARRAY['MASTER', 'DIRECTOR', 'MANAGER', 'MODERATOR', 'HELPER']);`,
 				name,
 		))

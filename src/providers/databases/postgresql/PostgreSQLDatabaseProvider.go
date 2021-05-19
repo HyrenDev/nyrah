@@ -10,8 +10,15 @@ import (
 	"sync"
 )
 
-var once sync.Once
-var connection *sql.DB
+var (
+	once     sync.Once
+	host     string
+	port     int
+	user     string
+	password string
+	database string
+	schema   string
+)
 
 type PostgreSQLDatabaseProvider struct {
 	DatabaseProviders.IDatabaseProvider
@@ -20,39 +27,27 @@ type PostgreSQLDatabaseProvider struct {
 func (databaseProvider PostgreSQLDatabaseProvider) Prepare() {
 	var postgres = environment.Get("databases").(map[string]interface{})["postgresql"].(map[string]interface{})
 
-	var host = postgres["host"].(string)
-	var port = int(postgres["port"].(float64))
-	var user = postgres["user"].(string)
-	var password = postgres["password"].(string)
-	var database = postgres["database"].(string)
-	var schema = postgres["schema"].(string)
-
-	log.Printf("Connecting to PostgreSQL database (%s:%d)...\n", host, port)
-
-	var err error
-
-	once.Do(func() {
-		connection, err = sql.Open("postgres", fmt.Sprintf(
-			`host=%s port=%d user=%s password=%s dbname=%s sslmode=disable search_path=%s`,
-			host, port, user, password, database, schema,
-		))
-
-		if err != nil {
-			panic(err)
-		}
-	})
-
-	log.Println("PostgreSQL connection established successfully!")
+	host = postgres["host"].(string)
+	port = int(postgres["port"].(float64))
+	user = postgres["user"].(string)
+	password = postgres["password"].(string)
+	database = postgres["database"].(string)
+	schema = postgres["schema"].(string)
 }
 
-func (databaseProvider PostgreSQLDatabaseProvider) Provide() *sql.Tx {
-	begin, err := connection.Begin()
+func (databaseProvider PostgreSQLDatabaseProvider) Provide() *sql.DB {
+	log.Printf("Connecting to PostgreSQL database (%s:%d)...\n", host, port)
+
+	connection, err := sql.Open("postgres", fmt.Sprintf(
+		`host=%s port=%d user=%s password=%s dbname=%s sslmode=disable search_path=%s`,
+		host, port, user, password, database, schema,
+	))
 
 	if err != nil {
 		panic(err)
 	}
 
-	log.Println(begin)
+	log.Println("PostgreSQL connection established successfully!")
 
-	return begin
+	return connection
 }
