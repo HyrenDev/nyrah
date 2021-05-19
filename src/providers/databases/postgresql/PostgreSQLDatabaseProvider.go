@@ -42,7 +42,7 @@ func (databaseProvider PostgreSQLDatabaseProvider) Prepare() {
 
 	connection.SetMaxOpenConns(10)
 	connection.SetMaxIdleConns(0)
-	connection.SetConnMaxLifetime(time.Millisecond)
+	connection.SetConnMaxLifetime(time.Nanosecond)
 
 	log.Println("PostgreSQL connection established successfully!")
 }
