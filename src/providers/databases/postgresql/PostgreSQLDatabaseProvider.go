@@ -6,6 +6,8 @@ import (
 	_ "github.com/lib/pq"
 	"log"
 	"net/hyren/nyrah/environment"
+	"time"
+
 	DatabaseProviders "net/hyren/nyrah/providers/databases"
 )
 
@@ -27,7 +29,9 @@ func (databaseProvider PostgreSQLDatabaseProvider) Prepare() {
 
 	log.Printf("Connecting to PostgreSQL database (%s:%d)...\n", host, port)
 
-	_connection, err := sql.Open("postgres", fmt.Sprintf(
+	var err error
+
+	connection, err = sql.Open("postgres", fmt.Sprintf(
 		`host=%s port=%d user=%s password=%s dbname=%s sslmode=disable search_path=%s`,
 		host, port, user, password, database, schema,
 	))
@@ -36,11 +40,9 @@ func (databaseProvider PostgreSQLDatabaseProvider) Prepare() {
 		panic(err)
 	}
 
-	if err = _connection.Ping(); err != nil {
-		panic(err)
-	}
-
-	connection = _connection
+	connection.SetMaxOpenConns(10)
+	connection.SetMaxIdleConns(0)
+	connection.SetConnMaxLifetime(time.Millisecond)
 
 	log.Println("PostgreSQL connection established successfully!")
 }
