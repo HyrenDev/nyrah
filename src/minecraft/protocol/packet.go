@@ -36,6 +36,7 @@ var packets = map[Direction]map[State]map[int]reflect.Type{
 		},
 		Login: {
 			0x00: reflect.TypeOf(packet.LoginStart{}),
+			0x01: reflect.TypeOf(packet.EncryptionResponse{}),
 		},
 	},
 
@@ -46,6 +47,7 @@ var packets = map[Direction]map[State]map[int]reflect.Type{
 		},
 		Login: {
 			0x00: reflect.TypeOf(packet.LoginDisconnect{}),
+			0x01: reflect.TypeOf(packet.EncryptionRequest{}),
 			0x02: reflect.TypeOf(packet.LoginSuccess{}),
 		},
 		Play: {

@@ -17,7 +17,7 @@ type Connection struct {
 
 	State       State
 	Protocol    uint16
-	PacketQueue [2]packet.Holder
+	PacketQueue [8]packet.Holder
 	Stop        bool
 }
 

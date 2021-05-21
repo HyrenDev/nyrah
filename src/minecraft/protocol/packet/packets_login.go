@@ -11,6 +11,15 @@ type LoginStart struct {
 
 func (_ LoginStart) ID() int { return 0x00 }
 
+type EncryptionResponse struct {
+	SharedSecretLength codecs2.VarInt
+	SharedSecret codecs2.ByteArray
+	VerifyTokenLength codecs2.VarInt
+	VerifyToken codecs2.ByteArray
+}
+
+func (_ EncryptionResponse) ID() int { return 0x01 }
+
 type LoginSuccess struct {
 	UUID     codecs2.String
 	Username codecs2.String
@@ -23,3 +32,13 @@ type LoginDisconnect struct {
 }
 
 func (_ LoginDisconnect) ID() int { return 0x00 }
+
+type EncryptionRequest struct {
+	ServerID          codecs2.String
+	PublicKeyLength   codecs2.VarInt
+	PublicKey         codecs2.ByteArray
+	VerifyTokenLength codecs2.VarInt
+	VerifyToken       codecs2.ByteArray
+}
+
+func (_ EncryptionRequest) ID() int { return 0x01 }

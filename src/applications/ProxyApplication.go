@@ -51,7 +51,17 @@ func GetProxyAddress(key string) io.InetSocketAddress {
 	return inetSocketAddress.(io.InetSocketAddress)
 }
 
-func GetRandomProxy(proxies []string) (string, error) {
+func GetRandomProxy(proxies ...string) (string, error) {
+	var err error
+
+	if len(proxies) == 0 {
+		proxies, err = FetchAvailableProxiesNames()
+
+		if err != nil {
+			return "", err
+		}
+	}
+
 	proxyApplicationName, err := GetBalancedProxyApplicationName(proxies)
 
 	if proxyApplicationName == "" {

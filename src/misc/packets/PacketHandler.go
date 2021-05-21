@@ -1,9 +1,13 @@
 package packets
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
 	"errors"
 	"fmt"
 	"log"
+	"net/http"
 	"net/hyren/nyrah/minecraft/protocol"
 	"net/hyren/nyrah/minecraft/protocol/codecs"
 	"net/hyren/nyrah/minecraft/protocol/packet"
@@ -13,6 +17,7 @@ import (
 	ProxyApplication "net/hyren/nyrah/applications"
 	ProxyStatus "net/hyren/nyrah/applications/status/proxy"
 	ProxyConnector "net/hyren/nyrah/misc/connector"
+	NyrahConstants "net/hyren/nyrah/misc/constants"
 	Config "net/hyren/nyrah/misc/utils"
 	User "net/hyren/nyrah/users"
 )
@@ -33,7 +38,7 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 			handshake.NextState = 2
 			handshake.ServerAddress = codecs.String(strings.Split(connection.Handle.RemoteAddr().String(), ":")[0])
 
-			log.Println("Received ping request from:", connection.Handle.RemoteAddr().String())
+			log.Println("Received handshake request from:", connection.Handle.RemoteAddr().String())
 
 			connection.PacketQueue[0] = handshake
 
@@ -121,9 +126,71 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 				}
 
 				connection.PacketQueue[1] = loginStart
+			}
+
+			encryptionRequest, ok := holder.(packet.EncryptionRequest)
+
+			if ok {
+				privateKey, err := rsa.GenerateKey(rand.Reader, 1024)
+
+				if err != nil {
+					panic(err)
+				}
+
+				publicKey := privateKey.PublicKey
+
+				publicKeyBytes, err := x509.MarshalPKIXPublicKey(publicKey)
+
+				token := make([]byte, 4)
+
+				verifyTokenLength, err := rand.Read(token)
+
+				if err != nil {
+					panic(err)
+				}
+
+				encryptionRequest.ServerID = NyrahConstants.SERVER_ID
+				encryptionRequest.PublicKey = publicKeyBytes
+				encryptionRequest.PublicKeyLength = codecs.VarInt(len(publicKeyBytes))
+				encryptionRequest.VerifyToken = token
+				encryptionRequest.VerifyTokenLength = codecs.VarInt(verifyTokenLength)
+
+				connection.PacketQueue[2] = encryptionRequest
+			}
+
+			encryptionResponse, ok := holder.(packet.EncryptionResponse)
+
+			if ok {
+				response, err := http.Get(fmt.Sprintf(
+					`https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s&ip=%s`,
+					string(loginStart.Username),
+					encryptionRequest.ServerID,
+					connection.GetRemoteAddr(),
+				))
+
+				if err != nil {
+					return nil
+				}
+
+				encryptionResponse.SharedSecret = encryptionRequest.PublicKey
+				encryptionResponse.SharedSecretLength = encryptionRequest.PublicKeyLength
+				encryptionResponse.VerifyToken = encryptionRequest.VerifyToken
+				encryptionResponse.VerifyTokenLength = encryptionRequest.VerifyTokenLength
+
+				connection.PacketQueue[5] = encryptionResponse
+
+				println(response.Body)
+
+				response.Close = true
+			}
+
+			loginSuccess, ok := holder.(packet.LoginSuccess)
+
+			if ok {
+				connection.PacketQueue[7] = loginSuccess
 				connection.Stop = true
 
-				key, err := ProxyApplication.GetRandomProxy(proxies)
+				key, err := ProxyApplication.GetRandomProxy()
 
 				if err != nil {
 					User.DisconnectBecauseNotHaveProxyToSend(
@@ -133,8 +200,6 @@ func HandlePackets(connection *protocol.Connection, holder packet.Holder) error 
 				}
 
 				go ProxyConnector.ConnectToProxy(connection, key)
-			} else {
-				log.Printf("Falha ao receber a conexão de %s\n", string(loginStart.Username))
 			}
 		}
 	default:
